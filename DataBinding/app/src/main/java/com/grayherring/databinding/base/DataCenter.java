@@ -1,11 +1,14 @@
-package com.grayherring.databinding;
+package com.grayherring.databinding.base;
 
 import com.grayherring.databinding.model.Book;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmObject;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import timber.log.Timber;
 
 /**
@@ -26,18 +29,18 @@ public class DataCenter {
     return instance;
   }
 
-  public void deleteAllData() {
+  public boolean deleteAllData() {
     Realm realm = Realm.getDefaultInstance();
     try {
-
-
+      realm.deleteAll();
+      return true;
     } catch (Exception e) {
       Timber.e(e.getLocalizedMessage());
+      return false;
     } finally {
       realm.close();
     }
   }
-
 
 
 //  public void register(
@@ -48,83 +51,68 @@ public class DataCenter {
 //
 //  }
 
-  public void seed() {
+  public Observable<ArrayList<Book>> seed() {
+
+    ArrayList<Book> books = new ArrayList<>();
     Realm realm = Realm.getDefaultInstance();
-    realm.asObservable()
-        .first()
-        .observeOn(AndroidSchedulers.mainThread())
-        .map(bgreal -> {
-          Book book;
-          ArrayList<Book> books = new ArrayList<>();
-          for (int i = 0; i < 3; i++) {
-            book = new Book();
-            bgreal.beginTransaction();
-            try {
-              book.setId(realm.where(Book.class).max("id").intValue() + 1);
-              // no books yet
-            } catch (NullPointerException e) {
-              book.setId(0);
-            }
-            book.setTitle("Flux Book V" + i);
-            book.setAuthor("Grayherring inc");
-            book.setPublisher("Grayherring inc");
-            book.setCategories("fire");
-            bgreal.copyToRealmOrUpdate(book);
-            bgreal.commitTransaction();
-            books.add(book);
-          }
-          bgreal.close();
-          return books;
-        });
+    return Observable.just(books).concatMap(books1 -> {
+      Book book;
+      for (int i = 0; i < 3; i++) {
+        book = new Book();
+        realm.beginTransaction();
+        try {
+          book.setId(realm.where(Book.class).max("id").intValue() + 1);
+          // no books yet
+        } catch (NullPointerException e) {
+          book.setId(0);
+        }
+        book.setTitle("Flux Book V" + i);
+        book.setAuthor("Grayherring inc");
+        book.setPublisher("Grayherring inc");
+        book.setCategories("fire");
+        realm.copyToRealmOrUpdate(book);
+        realm.commitTransaction();
+        books1.add(book);
+      }
+      realm.close();
+      Observable<ArrayList<Book>> booksObservable = rx.Observable.just(books1);
+      return booksObservable;
+    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError(e -> realm.close());
+
   }
 
   //// TODO: 5/20/16 i should really create an error action
-  public void add(Book book, String source) {
+  public Observable<Book> add(final Book book) {
     Realm realm = Realm.getDefaultInstance();
+    return Observable.just(book).doOnNext(book1 -> {
+      realm.beginTransaction();
+      try {
+        book.setId(realm.where(Book.class).max("id").intValue() + 1);
+        // no books yet
+      } catch (NullPointerException e) {
+        book.setId(0);
+      }
+      realm.copyToRealmOrUpdate(book);
+      realm.commitTransaction();
+      realm.close();
+    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError(e -> realm.close());
 
-//    realm.asObservable()
-//        .first()
-//        .observeOn(AndroidSchedulers.mainThread())
-//        .subscribe(bgRealm -> {
-//          bgRealm.beginTransaction();
-//          try {
-//            book.setId(realm.where(Book.class).max("id").intValue() + 1);
-//            // no books yet
-//          } catch (NullPointerException e) {
-//            book.setId(0);
-//          }
-//          bgRealm.copyToRealmOrUpdate(book);
-//          bgRealm.commitTransaction();
-//          bgRealm.close();
-//          SwagAction successAction = new SwagAction(ADD_BOOK);
-//          successAction.source = source;
-//          successAction.payload.books.add(book);
-//          dispatcher.sendAction(successAction);
-//        }, throwable -> {
-//          Timber.e("add" + throwable.getLocalizedMessage());
-//          realm.close();
-//        }, () -> realm.close());
   }
 
-  public void remove(final int position, final Book book,
-      final String source) {
-//    Realm realm = Realm.getDefaultInstance();
-//    realm.where(Book.class).equalTo("id", book.getId()).findFirst().asObservable().subscribe(
-//        realmObject -> {
-//          realmObject.deleteFromRealm();
-//          SwagAction successAction = new SwagAction(DELETE_BOOK);
-//          successAction.source = source;
-//          successAction.payload.pos = position;
-//          successAction.payload.books.add(book);
-//          dispatcher.sendAction(successAction);
-//        }, throwable -> {
-//          Timber.e("remove" + throwable.getLocalizedMessage());
-//          realm.close();
-//        }, realm::close);
+  public Observable<Book> remove(final Book book) {
+    Realm realm = Realm.getDefaultInstance();
+    return Observable.just(book).doOnNext(book1 -> {
+      realm.where(Book.class).equalTo("id", book.getId()).findFirstAsync().asObservable().concatMap((Func1<RealmObject, Observable<Book>>) realmObject -> {
+        {
+          realmObject.deleteFromRealm();
+          return Observable.just(book);
+        }
+      }).doOnError(e -> realm.close());
+    }).observeOn(AndroidSchedulers.mainThread());
   }
 
   public void update(final Integer position,
-      final Book book, final String source) {
+                     final Book book, final String source) {
 //
 //    Realm realm = Realm.getDefaultInstance();
 //    realm.asObservable()
