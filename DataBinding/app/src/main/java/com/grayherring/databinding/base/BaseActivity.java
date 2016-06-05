@@ -1,4 +1,4 @@
-package com.grayherring.databinding;
+package com.grayherring.databinding.base;
 
 import android.support.v7.app.AppCompatActivity;
 

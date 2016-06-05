@@ -12,14 +12,14 @@ import java.util.List;
  * Created by David on 6/4/2016.
  */
 
-public class MainVM {
-    ObservableArrayList<Book> books = new ObservableArrayList<>();
+public class MainVM  {
+  ObservableArrayList<Book> books = new ObservableArrayList<>();
 
-    public MainVM() {
+  public MainVM() {
 
-    }
+  }
 
-    public List<Book> getBooks() {
-        return books;
-    }
+  public List<Book> getBooks() {
+    return books;
+  }
 }
