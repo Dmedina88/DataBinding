@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.grayherring.databinding.MainVM"/>
+            type="com.grayherring.databinding.main.MainVM"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout>

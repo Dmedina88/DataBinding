@@ -3,6 +3,7 @@ package com.grayherring.databinding.base;
 import com.grayherring.databinding.model.Book;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -49,10 +50,12 @@ public class DataCenter {
 //
 //  public void unRegister(
 //
-//  }
+//  }public String getImage(){
+
+
 
   public Observable<ArrayList<Book>> seed() {
-
+    Random random = new Random();
     ArrayList<Book> books = new ArrayList<>();
     Realm realm = Realm.getDefaultInstance();
     return Observable.just(books).concatMap(books1 -> {
@@ -70,6 +73,7 @@ public class DataCenter {
         book.setAuthor("Grayherring inc");
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
+        book.setImage(   "https://unsplash.it/200/300?image=" +random.nextInt(1000));
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
         books1.add(book);

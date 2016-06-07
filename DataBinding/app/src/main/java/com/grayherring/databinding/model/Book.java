@@ -1,5 +1,7 @@
 package com.grayherring.databinding.model;
 
+import java.util.Random;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -15,6 +17,10 @@ public class Book extends RealmObject {
   private String lastCheckedOutBy;
   private String publisher;
   private String title;
+
+
+
+  private String image;
   @PrimaryKey
   private Integer id;
 
@@ -73,4 +79,13 @@ public class Book extends RealmObject {
   public void setId(Integer id) {
     this.id = id;
   }
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
 }
