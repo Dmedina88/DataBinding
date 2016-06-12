@@ -2,64 +2,55 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable
-            name="vm"
-            type="com.grayherring.databinding.main.MainVM"/>
-    </data>
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+  <data>
+    <variable
+        name="vm"
+        type="com.grayherring.databinding.activity.main.MainVM"
+        />
+  </data>
 
-    <android.support.design.widget.CoordinatorLayout>
+  <android.support.design.widget.CoordinatorLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appBar"
+
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical"
+          >
+
+
+
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                />
-
-        </android.support.design.widget.AppBarLayout>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swiperefresh"
+            android:text="Get All Saved Data"
+            android:onClick="@{vm.getAllData}"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/main_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                >
-                <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Get All Saved Data"
-                    />
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/main_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:listitem="@layout/item_book"/>
-
-            </LinearLayout>
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_add"
-            app:layout_anchor="@id/main_rv"
-            app:layout_anchorGravity="bottom|end"
+            tools:listitem="@layout/item_book"
             />
 
-    </android.support.design.widget.CoordinatorLayout>
+      </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_add"
+        android:onClick="@{vm.startAddActivity}"
+        app:layout_anchor="@id/main_rv"
+        app:layout_anchorGravity="bottom|end"
+        />
+
+  </android.support.design.widget.CoordinatorLayout>
 
 </layout>

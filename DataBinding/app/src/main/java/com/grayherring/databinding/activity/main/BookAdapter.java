@@ -1,4 +1,4 @@
-package com.grayherring.databinding.main;
+package com.grayherring.databinding.activity.main;
 
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableList;
@@ -10,9 +10,6 @@ import android.view.ViewGroup;
 
 import com.grayherring.databinding.R;
 import com.grayherring.databinding.databinding.ItemBookBinding;
-import com.grayherring.databinding.model.Book;
-
-import java.util.List;
 
 /**
  * Created by David on 6/4/2016.
@@ -33,24 +30,21 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookVH> {
       @Override
       public void onItemRangeChanged(ObservableList observableList, int positionStart, int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
-
       }
 
       @Override
       public void onItemRangeInserted(ObservableList observableList, int positionStart, int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
-
       }
 
       @Override
       public void onItemRangeMoved(ObservableList observableList, int i, int positionStart, int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
-
       }
 
       @Override
       public void onItemRangeRemoved(ObservableList observableList, int positionStart, int itemCount) {
-        BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
+        BookAdapter.this.notifyDataSetChanged();
 
       }
     });

@@ -1,12 +1,11 @@
-package com.grayherring.databinding.base;
+package com.grayherring.databinding.data;
 
 import com.grayherring.databinding.model.Book;
-
-import java.util.ArrayList;
-import java.util.Random;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -43,23 +42,20 @@ public class DataCenter {
     }
   }
 
-
-//  public void register(
-//
-//  }
-//
-//  public void unRegister(
-//
-//  }public String getImage(){
-
-
+  //  public void register(
+  //
+  //  }
+  //
+  //  public void unRegister(
+  //
+  //  }public String getImage(){
 
   public Observable<ArrayList<Book>> seed() {
     Random random = new Random();
     ArrayList<Book> books = new ArrayList<>();
-    Realm realm = Realm.getDefaultInstance();
     return Observable.just(books).concatMap(books1 -> {
       Book book;
+      Realm realm = Realm.getDefaultInstance();
       for (int i = 0; i < 3; i++) {
         book = new Book();
         realm.beginTransaction();
@@ -70,10 +66,10 @@ public class DataCenter {
           book.setId(0);
         }
         book.setTitle("Flux Book V" + i);
-        book.setAuthor("Grayherring inc");
+        book.setAuthor("Grayherring BattleStar");
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
-        book.setImage(   "https://unsplash.it/200/300?image=" +random.nextInt(1000));
+        book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
         books1.add(book);
@@ -81,14 +77,13 @@ public class DataCenter {
       realm.close();
       Observable<ArrayList<Book>> booksObservable = rx.Observable.just(books1);
       return booksObservable;
-    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError(e -> realm.close());
-
+    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   //// TODO: 5/20/16 i should really create an error action
   public Observable<Book> add(final Book book) {
-    Realm realm = Realm.getDefaultInstance();
     return Observable.just(book).doOnNext(book1 -> {
+      Realm realm = Realm.getDefaultInstance();
       realm.beginTransaction();
       try {
         book.setId(realm.where(Book.class).max("id").intValue() + 1);
@@ -99,42 +94,54 @@ public class DataCenter {
       realm.copyToRealmOrUpdate(book);
       realm.commitTransaction();
       realm.close();
-    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError(e -> realm.close());
-
+    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   public Observable<Book> remove(final Book book) {
-    Realm realm = Realm.getDefaultInstance();
     return Observable.just(book).doOnNext(book1 -> {
-      realm.where(Book.class).equalTo("id", book.getId()).findFirstAsync().asObservable().concatMap((Func1<RealmObject, Observable<Book>>) realmObject -> {
-        {
-          realmObject.deleteFromRealm();
-          return Observable.just(book);
-        }
-      }).doOnError(e -> realm.close());
+      Realm realm = Realm.getDefaultInstance();
+      realm.where(Book.class)
+          .equalTo("id", book.getId())
+          .findFirstAsync()
+          .asObservable()
+          .concatMap((Func1<RealmObject, Observable<Book>>) realmObject -> {
+            {
+              realmObject.deleteFromRealm();
+              return Observable.just(book);
+            }
+          })
+          .doOnError(e -> realm.close());
     }).observeOn(AndroidSchedulers.mainThread());
   }
 
+  public Observable<List<Book>> getAllData() {
+    Realm realm = Realm.getDefaultInstance();
+    return realm.where(Book.class).findAllAsync().asObservable()
+        .observeOn(AndroidSchedulers.mainThread())
+        .map(realm::copyFromRealm)
+        .doOnCompleted(realm::close);
+  }
+
   public void update(final Integer position,
-                     final Book book, final String source) {
-//
-//    Realm realm = Realm.getDefaultInstance();
-//    realm.asObservable()
-//        .observeOn(AndroidSchedulers.mainThread())
-//        .subscribe(bgRealm -> {
-//          bgRealm.beginTransaction();
-//          bgRealm.copyToRealmOrUpdate(book);
-//          bgRealm.commitTransaction();
-//          bgRealm.close();
-//          SwagAction successAction = new SwagAction(UPDATE_BOOK);
-//          successAction.source = source;
-//          successAction.payload.pos = position;
-//          successAction.payload.books.add(book);
-//          dispatcher.sendAction(successAction);
-//        }, throwable -> {
-//          Timber.e("update" + throwable.getLocalizedMessage());
-//          realm.close();
-//        }, realm::close);
+      final Book book, final String source) {
+    //
+    //    Realm realm = Realm.getDefaultInstance();
+    //    realm.asObservable()
+    //        .observeOn(AndroidSchedulers.mainThread())
+    //        .subscribe(bgRealm -> {
+    //          bgRealm.beginTransaction();
+    //          bgRealm.copyToRealmOrUpdate(book);
+    //          bgRealm.commitTransaction();
+    //          bgRealm.close();
+    //          SwagAction successAction = new SwagAction(UPDATE_BOOK);
+    //          successAction.source = source;
+    //          successAction.payload.pos = position;
+    //          successAction.payload.books.add(book);
+    //          dispatcher.sendAction(successAction);
+    //        }, throwable -> {
+    //          Timber.e("update" + throwable.getLocalizedMessage());
+    //          realm.close();
+    //        }, realm::close);
   }
 /*
   public void checkOut(final Integer position, final Book book, final String source) {
@@ -196,16 +203,7 @@ public class DataCenter {
     dispatcher.sendAction(backPress);
   }
 
-  public void getAllData() {
-    Realm realm = Realm.getDefaultInstance();
-    realm.where(Book.class).findAllAsync().asObservable()
-        .observeOn(AndroidSchedulers.mainThread())
-        .map(realm::copyFromRealm)
-        .doOnNext(this::success)
-        .doOnError(this::failure)
-        .doOnCompleted(realm::close)
-        .subscribe();
-  }
+
 
   private void failure(Throwable throwable) {
     Timber.d(throwable.getLocalizedMessage());
