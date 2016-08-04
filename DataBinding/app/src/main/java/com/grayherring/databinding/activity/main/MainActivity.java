@@ -5,18 +5,15 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
-
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.grayherring.databinding.R;
 import com.grayherring.databinding.activity.AddBookActivity;
 import com.grayherring.databinding.base.BaseActivity;
-import com.grayherring.databinding.base.BaseView;
 import com.grayherring.databinding.databinding.ActivityMainBinding;
 
-
-public class MainActivity extends BaseActivity<MainVM>  implements MainView{
+public class MainActivity extends BaseActivity<MainVM> implements MainView {
 
   BookAdapter bookAdapter;
   private SearchView searchView;
@@ -27,18 +24,20 @@ public class MainActivity extends BaseActivity<MainVM>  implements MainView{
     super.onCreate(savedInstanceState);
     ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
     viewModel = new MainVM(this);
+    viewModel.attach(this);
     binding.setVm(viewModel);
     binding.mainRv.setLayoutManager(new LinearLayoutManager(this));
     bookAdapter = new BookAdapter(viewModel);
     binding.mainRv.setAdapter(bookAdapter);
+    // DataCenter.subscribe();
+
   }
 
   @Override
   protected void onDestroy() {
-    //DataCenter.unregister(this);
+    viewModel.detach();
     super.onDestroy();
   }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -67,7 +66,7 @@ public class MainActivity extends BaseActivity<MainVM>  implements MainView{
   }
 
   @Override public void startAddActivity() {
-    Intent i = new Intent(this,AddBookActivity.class);
+    Intent i = new Intent(this, AddBookActivity.class);
     this.startActivity(i);
   }
 

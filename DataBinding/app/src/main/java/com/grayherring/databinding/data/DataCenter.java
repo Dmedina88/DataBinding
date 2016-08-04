@@ -1,5 +1,8 @@
 package com.grayherring.databinding.data;
 
+import android.support.annotation.NonNull;
+import com.grayherring.databinding.data.provider.BookAddedDataProvider;
+import com.grayherring.databinding.data.provider.NewListDataProvider;
 import com.grayherring.databinding.model.Book;
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -8,23 +11,39 @@ import java.util.List;
 import java.util.Random;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import timber.log.Timber;
 
 /**
  * Created by davidmedina on 4/22/16.
  */
-//// TODO: I had these all as static at one point but i changed I liked the idea of maybe impmenting more the one kind of action Creater
 public class DataCenter {
 
-  private DataCenter() {
+  private final Observable<DataProvider> dataProviders;
+
+  private DataCenter(List<DataProvider> dataProviders) {
+    this.dataProviders = Observable.from(dataProviders);
   }
 
   private static DataCenter instance;
 
+  public static DataCenter init(List<DataProvider> dataProviders) {
+    if (instance == null) {
+      synchronized (DataCenter.class) {
+        if (instance == null) {
+          instance = new DataCenter(dataProviders);
+        }
+      }
+    }
+    return instance;
+  }
+
+
   public static DataCenter getInstance() {
     if (instance == null) {
-      instance = new DataCenter();
+      throw new InstantiationError(
+          "DataManager was never set up. Call DataManager.init(dataProviders)");
     }
     return instance;
   }
@@ -81,20 +100,10 @@ public class DataCenter {
   }
 
   //// TODO: 5/20/16 i should really create an error action
-  public Observable<Book> add(final Book book) {
-    return Observable.just(book).doOnNext(book1 -> {
-      Realm realm = Realm.getDefaultInstance();
-      realm.beginTransaction();
-      try {
-        book.setId(realm.where(Book.class).max("id").intValue() + 1);
-        // no books yet
-      } catch (NullPointerException e) {
-        book.setId(0);
-      }
-      realm.copyToRealmOrUpdate(book);
-      realm.commitTransaction();
-      realm.close();
-    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+  public void add(final Book book) {
+    provider(BookAddedDataProvider.class).subscribe(bookAddedDataProvider -> {
+      bookAddedDataProvider.addBook(book);
+    });
   }
 
   public Observable<Book> remove(final Book book) {
@@ -104,7 +113,7 @@ public class DataCenter {
           .equalTo("id", book.getId())
           .findFirstAsync()
           .asObservable()
-          .concatMap((Func1<RealmObject, Observable<Book>>) realmObject -> {
+          .concatMap(realmObject -> {
             {
               realmObject.deleteFromRealm();
               return Observable.just(book);
@@ -114,12 +123,10 @@ public class DataCenter {
     }).observeOn(AndroidSchedulers.mainThread());
   }
 
-  public Observable<List<Book>> getAllData() {
-    Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).findAllAsync().asObservable()
-        .observeOn(AndroidSchedulers.mainThread())
-        .map(realm::copyFromRealm)
-        .doOnCompleted(realm::close);
+  public void getAllData() {
+    provider(NewListDataProvider.class).subscribe(newListDataProvider -> {
+      newListDataProvider.getData();
+    });
   }
 
   public void update(final Integer position,
@@ -217,4 +224,18 @@ public class DataCenter {
     dispatcher.sendAction(successAction);
   }
   */
+
+  public static void subscribe(DataObserver observer) {
+    instance.dataProviders.filter(provider -> provider.canObserve(observer))
+        .subscribe(provider -> provider.subscribe(observer));
+  }
+
+  public static void unsubscribe(DataObserver observer) {
+    instance.dataProviders.filter(provider -> provider.canObserve(observer))
+        .subscribe(provider -> provider.unSubscribe(observer));
+  }
+
+  @NonNull private <T extends DataProvider> Observable<T> provider(Class<T> clazz) {
+    return dataProviders.filter(clazz::isInstance).map(clazz::cast);
+  }
 }

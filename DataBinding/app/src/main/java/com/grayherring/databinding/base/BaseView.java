@@ -1,7 +1,7 @@
 package com.grayherring.databinding.base;
 
 /**
- * Created by David on 6/5/2016.
+ * Extend this marker interface for all Views (in an MVVM context).
  */
 public interface BaseView {
 }

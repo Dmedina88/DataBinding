@@ -1,17 +1,40 @@
 package com.grayherring.databinding.base;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import timber.log.Timber;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
- * Created by David on 6/5/2016.
+ * Base activity created to be extended by every activity.
+ * This class provides dependency injection configuration, ButterKnife configuration and
+ * some methods common to every activity.
  */
-public class BaseActivity<T extends BaseViewModel>  extends AppCompatActivity {
-
- protected T viewModel;
+public abstract class BaseActivity  extends RxAppCompatActivity implements ErrorHandler  {
 
 
-  @Override protected void onDestroy() {
-    viewModel.detach();
-    super.onDestroy();
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    initializeDependencyInjector();
+    super.onCreate(savedInstanceState);
+  }
+
+  @Override protected void attachBaseContext(Context newBase) {
+    super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+  }
+
+  @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+    // this is used to open the debug activity in debug builds
+    return super.onKeyUp(keyCode, event);
+  }
+
+  /**
+   * Initialize and inject your graph component, if needed.
+   */
+  protected abstract void initializeDependencyInjector();
+
+  @Override public void logError(Throwable error) {
+    Timber.e(error.getLocalizedMessage());
   }
 }
