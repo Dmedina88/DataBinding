@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.grayherring.databinding.R;
+import com.grayherring.databinding.databinding.ItemBookBinding;
 
 /**
  * Created by David on 6/4/2016.

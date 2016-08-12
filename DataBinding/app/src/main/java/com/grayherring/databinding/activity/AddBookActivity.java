@@ -16,6 +16,10 @@ public class AddBookActivity extends UploadActivity {
 
   }
 
+  @Override protected void initializeDependencyInjector() {
+
+  }
+
   public void submit(View view) {
 
     //if (Util.checkFieldsEmpty(titleEditText, authorEditText, publisherEditText,

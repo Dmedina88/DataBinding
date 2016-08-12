@@ -18,8 +18,8 @@ import timber.log.Timber;
 public class MainVM extends BaseViewModel<MainView> implements NewListObserver ,AddBookObserver {
   ObservableArrayList<Book> books = new ObservableArrayList<>();
 
-  protected MainVM(MainView view) {
-    super(view);
+  protected MainVM(final Class<MainView> viewClass) {
+    super(viewClass);
   }
 
   public List<Book> getBooks() {

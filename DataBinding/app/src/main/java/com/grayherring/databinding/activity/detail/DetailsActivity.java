@@ -25,6 +25,10 @@ public class DetailsActivity extends BaseActivity {
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
 
+  @Override protected void initializeDependencyInjector() {
+
+  }
+
   @Override
   protected void onDestroy() {
     super.onDestroy();

@@ -10,33 +10,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.grayherring.databinding.R;
 import com.grayherring.databinding.activity.AddBookActivity;
-import com.grayherring.databinding.base.BaseActivity;
+import com.grayherring.databinding.base.BaseBindingActivity;
+import com.grayherring.databinding.dagger.component.HomeComponent;
 import com.grayherring.databinding.databinding.ActivityMainBinding;
+import io.realm.Realm;
+import javax.inject.Inject;
 
-public class MainActivity extends BaseActivity<MainVM> implements MainView {
+public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainVM, MainView>
+    implements MainView {
 
   BookAdapter bookAdapter;
   private SearchView searchView;
   MenuItem searchMenuItem;
+   Realm realm;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-    viewModel = new MainVM(this);
-    viewModel.attach(this);
-    binding.setVm(viewModel);
     binding.mainRv.setLayoutManager(new LinearLayoutManager(this));
-    bookAdapter = new BookAdapter(viewModel);
+    bookAdapter = new BookAdapter(vm);
     binding.mainRv.setAdapter(bookAdapter);
     // DataCenter.subscribe();
 
   }
 
+  @Override protected void initializeDependencyInjector() {
+    HomeComponent.Initializer.init(this).inject(this);
+  }
+
   @Override
   protected void onDestroy() {
-    viewModel.detach();
     super.onDestroy();
+  }
+
+  @Override protected int getLayoutId() {
+    return 0;
   }
 
   @Override
@@ -56,10 +64,10 @@ public class MainActivity extends BaseActivity<MainVM> implements MainView {
         startAddActivity();
         break;
       case R.id.action_seed:
-        viewModel.seed();
+        vm.seed();
         break;
       case R.id.action_delete_all:
-        viewModel.delete();
+        vm.delete();
         break;
     }
     return true;

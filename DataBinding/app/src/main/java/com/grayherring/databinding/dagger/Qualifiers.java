@@ -13,32 +13,6 @@ public final class Qualifiers {
 
   @Qualifier
   @Retention(RUNTIME)
-  public @interface ApiAms {
-  }
-
-  @Qualifier
-  @Retention(RUNTIME)
-  public @interface ApiProlific {
-  }
-
-  @Qualifier
-  @Retention(RUNTIME)
-  public @interface Title {
-  }
-
-  @Qualifier
-  @Retention(RUNTIME)
-  public @interface IsMockMode {
-  }
-
-  @Qualifier
-  @Retention(RUNTIME)
-  public @interface MockNetworkDelay {
-  }
-
-
-  @Qualifier
-  @Retention(RUNTIME)
   public @interface SimpleDividerItemDecoration {
   }
 }

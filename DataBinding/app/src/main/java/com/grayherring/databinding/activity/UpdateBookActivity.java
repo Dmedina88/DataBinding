@@ -22,6 +22,10 @@ public class UpdateBookActivity extends UploadActivity {
     // AppStore.getInstance().register(this);
   }
 
+  @Override protected void initializeDependencyInjector() {
+
+  }
+
   //  @OnClick(R.id.submit_button)
   public void submit(View view) {
     //    if (Util.checkFieldsEmpty(titleEditText, authorEditText, publisherEditText, categoriesEditText)) {
