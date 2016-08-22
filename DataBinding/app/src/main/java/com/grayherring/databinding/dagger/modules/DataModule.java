@@ -1,14 +1,8 @@
 package com.grayherring.databinding.dagger.modules;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.grayherring.databinding.SwagApp;
-import com.grayherring.databinding.base.BaseView;
-import com.grayherring.databinding.base.BaseViewModel;
 import com.grayherring.databinding.dagger.PerApp;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
@@ -20,24 +14,11 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
-import static android.content.Context.MODE_PRIVATE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Module
 public class DataModule {
   public static final int DISK_CACHE_SIZE = (int) (50 * 1024 * 1024); // 50MB
-
-  @Provides @PerApp Gson provideGson() {
-    return new GsonBuilder().create();
-  }
-
-
-  @Provides @PerApp Picasso providePicasso(final Application app, final OkHttpClient client) {
-    return new Picasso.Builder(app)
-        .downloader(new OkHttp3Downloader(client))
-        .listener((picasso, uri, e) -> Timber.e(e, "Failed to load image: %s", uri))
-        .build();
-  }
 
   static OkHttpClient createOkHttpClient(
       final Application app) {
@@ -53,8 +34,18 @@ public class DataModule {
         .build();
   }
 
-  @Provides @PerApp Realm provideRealm() {
-    return  Realm.getDefaultInstance();
+  @Provides @PerApp Gson provideGson() {
+    return new GsonBuilder().create();
   }
 
+  @Provides @PerApp Picasso providePicasso(final Application app, final OkHttpClient client) {
+    return new Picasso.Builder(app)
+        .downloader(new OkHttp3Downloader(client))
+        .listener((picasso, uri, e) -> Timber.e(e, "Failed to load image: %s", uri))
+        .build();
+  }
+
+  @Provides @PerApp Realm provideRealm() {
+    return Realm.getDefaultInstance();
+  }
 }

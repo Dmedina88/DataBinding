@@ -3,8 +3,6 @@ package com.grayherring.databinding.util.datbinding;
 import android.databinding.BindingAdapter;
 import android.text.TextUtils;
 import android.widget.ImageView;
-
-import com.grayherring.databinding.R;
 import com.squareup.picasso.Picasso;
 import timber.log.Timber;
 
@@ -20,7 +18,7 @@ public class Bindings {
   @BindingAdapter("imageUrl")
   public static void loadImage(ImageView view, String url) {
     if (!TextUtils.isEmpty(url)) {
-      Timber.d("loadImage: "+ url);
+      Timber.d("loadImage: " + url);
       Picasso.with(view.getContext())
           .load(url)
           .fit()

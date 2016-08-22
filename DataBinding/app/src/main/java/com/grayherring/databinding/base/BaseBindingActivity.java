@@ -4,13 +4,14 @@ import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import com.grayherring.databinding.BR;
-import javax.inject.Inject;
 
 public abstract class BaseBindingActivity<T extends ViewDataBinding, U extends BaseViewModel<V>, V extends BaseView>
     extends BaseActivity {
-  @Inject protected U vm;
+  protected U vm;
 
   protected T binding;
+
+  protected abstract void bindVM();
 
   /**
    * Override this method to customize the order of ViewBinding and ViewModel setup. By
@@ -22,15 +23,15 @@ public abstract class BaseBindingActivity<T extends ViewDataBinding, U extends B
    */
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    bindVM();
     binding = setupBinding();
 
     try {
       attachViewModel();
     } catch (ClassCastException e) {
       throw new ClassCastException(String.format(
-          "%s must implement interface %s",
-          this.getClass().getSimpleName(),
-          vm.viewClass().getSimpleName()
+          "must implement interface %s",
+          this.getClass().getSimpleName()
       ));
     }
 

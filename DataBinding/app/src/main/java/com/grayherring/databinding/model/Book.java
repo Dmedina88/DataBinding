@@ -1,6 +1,5 @@
 package com.grayherring.databinding.model;
 
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -16,8 +15,6 @@ public class Book extends RealmObject {
   private String lastCheckedOutBy;
   private String publisher;
   private String title;
-
-
 
   private String image;
   @PrimaryKey
@@ -87,4 +84,16 @@ public class Book extends RealmObject {
     this.image = image;
   }
 
+  @Override public String toString() {
+    return "Book{" +
+        "author='" + author + '\'' +
+        ", categories='" + categories + '\'' +
+        ", lastCheckedOut='" + lastCheckedOut + '\'' +
+        ", lastCheckedOutBy='" + lastCheckedOutBy + '\'' +
+        ", publisher='" + publisher + '\'' +
+        ", title='" + title + '\'' +
+        ", image='" + image + '\'' +
+        ", id=" + id +
+        '}';
+  }
 }

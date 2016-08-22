@@ -23,7 +23,7 @@
       <Button
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:onClick="@{vm.getAllData}"
+          android:onClick="@{vm::getAllData}"
           android:text="Get All Saved Data"
           />
       <android.support.v7.widget.RecyclerView
@@ -39,7 +39,7 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="@{vm.startAddActivity}"
+        android:onClick="@{vm::startAddActivity}"
         android:src="@android:drawable/ic_menu_add"
         app:layout_anchor="@id/main_rv"
         app:layout_anchorGravity="bottom|end"

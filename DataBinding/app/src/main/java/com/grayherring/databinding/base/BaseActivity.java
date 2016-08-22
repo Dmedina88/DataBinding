@@ -12,8 +12,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * This class provides dependency injection configuration, ButterKnife configuration and
  * some methods common to every activity.
  */
-public abstract class BaseActivity  extends RxAppCompatActivity implements ErrorHandler  {
-
+public abstract class BaseActivity extends RxAppCompatActivity implements ErrorHandler {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     initializeDependencyInjector();

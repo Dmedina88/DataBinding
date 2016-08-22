@@ -1,4 +1,4 @@
-package com.grayherring.databinding.activity;
+package com.grayherring.databinding.activity.addupdate;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +8,9 @@ import android.view.View;
  */
 public class AddBookActivity extends UploadActivity {
 
-
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
   }
 
   @Override protected void initializeDependencyInjector() {
@@ -33,11 +30,9 @@ public class AddBookActivity extends UploadActivity {
   }
 
   @Override protected void onDestroy() {
-  //  AppStore.getInstance().unregister(this);
+    //  AppStore.getInstance().unregister(this);
     super.onDestroy();
   }
-
-
 
   //@Override
   //public void call(SwagChangeEvent swagChangeEvent) {

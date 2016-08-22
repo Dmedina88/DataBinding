@@ -3,7 +3,6 @@ package com.grayherring.databinding.dagger.modules;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
-
 import com.grayherring.databinding.base.BaseActivity;
 import com.grayherring.databinding.dagger.PerActivity;
 import dagger.Module;

@@ -33,13 +33,11 @@ public abstract class DataProvider<S, T extends DataObserver> {
     return this.observerType.isInstance(observer);
   }
 
-  public S getData(){
+  public S getData() {
     return data;
   }
 
   public void setData(S data) {
     this.data = data;
   }
-
-
 }

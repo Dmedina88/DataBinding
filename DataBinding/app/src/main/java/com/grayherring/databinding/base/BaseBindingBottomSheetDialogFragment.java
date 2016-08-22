@@ -38,8 +38,7 @@ public abstract class BaseBindingBottomSheetDialogFragment<T extends ViewDataBin
     } catch (ClassCastException e) {
       throw new ClassCastException(String.format(
           "%s must implement interface %s",
-          this.getClass().getSimpleName(),
-          vm.viewClass().getSimpleName()
+          this.getClass().getSimpleName()
       ));
     }
 
@@ -88,7 +87,6 @@ public abstract class BaseBindingBottomSheetDialogFragment<T extends ViewDataBin
 
   /**
    * Provide the parent layout ID for the fragment.
-   * @return
    */
   protected abstract int getLayoutId();
 }

@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.grayherring.databinding.R;
 import com.grayherring.databinding.databinding.ItemBookBinding;
 
@@ -18,7 +17,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookVH> {
 
   MainVM mainVM;
 
-
   public BookAdapter(MainVM mainVM) {
     this.mainVM = mainVM;
     mainVM.books.addOnListChangedCallback(new OnListChangedCallback() {
@@ -28,31 +26,36 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookVH> {
       }
 
       @Override
-      public void onItemRangeChanged(ObservableList observableList, int positionStart, int itemCount) {
+      public void onItemRangeChanged(ObservableList observableList, int positionStart,
+          int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
       }
 
       @Override
-      public void onItemRangeInserted(ObservableList observableList, int positionStart, int itemCount) {
+      public void onItemRangeInserted(ObservableList observableList, int positionStart,
+          int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
       }
 
       @Override
-      public void onItemRangeMoved(ObservableList observableList, int i, int positionStart, int itemCount) {
+      public void onItemRangeMoved(ObservableList observableList, int i, int positionStart,
+          int itemCount) {
         BookAdapter.this.notifyItemRangeChanged(positionStart, itemCount);
       }
 
       @Override
-      public void onItemRangeRemoved(ObservableList observableList, int positionStart, int itemCount) {
+      public void onItemRangeRemoved(ObservableList observableList, int positionStart,
+          int itemCount) {
         BookAdapter.this.notifyDataSetChanged();
-
       }
     });
   }
 
   @Override
   public BookVH onCreateViewHolder(ViewGroup parent, int viewType) {
-    ItemBookBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_book, parent, false);
+    ItemBookBinding binding =
+        DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_book,
+            parent, false);
 
     return new BookVH(binding.getRoot());
   }
@@ -60,14 +63,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookVH> {
   @Override
   public void onBindViewHolder(BookVH holder, int position) {
     holder.binding.setBook(mainVM.books.get(position));
+    holder.binding.getRoot().setOnClickListener(
+        v -> mainVM.startDetailView(mainVM.books.get(position).getId()));
   }
 
   @Override
   public int getItemCount() {
     return mainVM.books.size();
   }
-
-
 
   public static class BookVH extends RecyclerView.ViewHolder {
 

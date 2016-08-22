@@ -1,8 +1,9 @@
-package com.grayherring.databinding.data;
+package com.grayherring.databinding.data.provider;
 
+import android.support.annotation.NonNull;
+import com.grayherring.databinding.data.DataProvider;
 import com.grayherring.databinding.model.Book;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,22 +14,27 @@ import timber.log.Timber;
 /**
  * Created by davidmedina on 4/22/16.
  */
-public class DataCenter {
+public class ProviderDataCenter {
 
-  private static DataCenter instance;
+  private static ProviderDataCenter instance;
+  private final Observable<DataProvider> dataProviders;
 
-  public static DataCenter init(List<DataProvider> dataProviders) {
+  private ProviderDataCenter(List<DataProvider> dataProviders) {
+    this.dataProviders = Observable.from(dataProviders);
+  }
+
+  public static ProviderDataCenter init(List<DataProvider> dataProviders) {
     if (instance == null) {
-      synchronized (DataCenter.class) {
+      synchronized (ProviderDataCenter.class) {
         if (instance == null) {
-          instance = new DataCenter();
+          instance = new ProviderDataCenter(dataProviders);
         }
       }
     }
     return instance;
   }
 
-  public static DataCenter getInstance() {
+  public static ProviderDataCenter getInstance() {
     if (instance == null) {
       throw new InstantiationError(
           "DataManager was never set up. Call DataManager.init(dataProviders)");
@@ -36,24 +42,26 @@ public class DataCenter {
     return instance;
   }
 
-  public Observable<Boolean> deleteAllData() {
+  public boolean deleteAllData() {
     Realm realm = Realm.getDefaultInstance();
-    return realm.asObservable().first().map(realm1 -> {
-      Boolean value;
-      try {
-        realm1.beginTransaction();
-        realm1.deleteAll();
-        realm1.commitTransaction();
-        value = true;
-      } catch (Exception e) {
-        Timber.e(e.getLocalizedMessage());
-        value = false;
-      } finally {
-        realm1.close();
-      }
-      return value;
-    });
+    try {
+      realm.deleteAll();
+      return true;
+    } catch (Exception e) {
+      Timber.e(e.getLocalizedMessage());
+      return false;
+    } finally {
+      realm.close();
+    }
   }
+
+  //  public void register(
+  //
+  //  }
+  //
+  //  public void unRegister(
+  //
+  //  }public String getImage(){
 
   public Observable<ArrayList<Book>> seed() {
     Random random = new Random();
@@ -80,26 +88,16 @@ public class DataCenter {
         books1.add(book);
       }
       realm.close();
-      Observable<ArrayList<Book>> booksObservable = rx.Observable.just(books1);
+      Observable<ArrayList<Book>> booksObservable = Observable.just(books1);
       return booksObservable;
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   //// TODO: 5/20/16 i should really create an error action
-  public Observable<Book> add(final Book book) {
-    return Observable.just(book).doOnNext(book1 -> {
-      Realm realm = Realm.getDefaultInstance();
-      realm.beginTransaction();
-      try {
-        book.setId(realm.where(Book.class).max("id").intValue() + 1);
-        // no books yet
-      } catch (NullPointerException e) {
-        book.setId(0);
-      }
-      realm.copyToRealmOrUpdate(book);
-      realm.commitTransaction();
-      realm.close();
-    }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+  public void add(final Book book) {
+    provider(BookAddedDataProvider.class).subscribe(bookAddedDataProvider -> {
+      bookAddedDataProvider.addBook(book);
+    });
   }
 
   public Observable<Book> remove(final Book book) {
@@ -119,34 +117,32 @@ public class DataCenter {
     }).observeOn(AndroidSchedulers.mainThread());
   }
 
-  public Observable<List<Book>> getAllData() {
-    Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).findAllAsync().asObservable()
-        .observeOn(AndroidSchedulers.mainThread())
-        .map(realm::copyFromRealm)
-        .doOnCompleted(realm::close);
+  public void getAllData() {
+    provider(NewListDataProvider.class).subscribe(newListDataProvider -> {
+      newListDataProvider.getData();
+    });
   }
 
-  public Observable<Book> getBookById(int id) {
-    Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).equalTo("id", id).findFirst().asObservable()
-        .map(realmObject -> (Book) realmObject)
-        .map(realm::copyFromRealm)
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnCompleted(realm::close);
-  }
-
-  public Observable<Book> update(final Book book) {
-    Realm realm = Realm.getDefaultInstance();
-    return realm.asObservable().first()
-        .observeOn(AndroidSchedulers.mainThread())
-        .map(bgRealm -> {
-          bgRealm.beginTransaction();
-          bgRealm.copyToRealmOrUpdate(book);
-          bgRealm.commitTransaction();
-          bgRealm.close();
-          return book;
-        }).doOnError(this::logError);
+  public void update(final Integer position,
+      final Book book, final String source) {
+    //
+    //    Realm realm = Realm.getDefaultInstance();
+    //    realm.asObservable()
+    //        .observeOn(AndroidSchedulers.mainThread())
+    //        .subscribe(bgRealm -> {
+    //          bgRealm.beginTransaction();
+    //          bgRealm.copyToRealmOrUpdate(book);
+    //          bgRealm.commitTransaction();
+    //          bgRealm.close();
+    //          SwagAction successAction = new SwagAction(UPDATE_BOOK);
+    //          successAction.source = source;
+    //          successAction.payload.pos = position;
+    //          successAction.payload.books.add(book);
+    //          dispatcher.sendAction(successAction);
+    //        }, throwable -> {
+    //          Timber.e("update" + throwable.getLocalizedMessage());
+    //          realm.close();
+    //        }, realm::close);
   }
 /*
   public void checkOut(final Integer position, final Book book, final String source) {
@@ -223,15 +219,22 @@ public class DataCenter {
   }
   */
 
-  public void addRealmChangeListener(RealmChangeListener<Realm> changeListener) {
-    Realm.getDefaultInstance().addChangeListener(changeListener);
-  }
+  //public static void subscribe(DataObserver observer) {
+  //  instance.dataProviders.filter(provider -> provider.canObserve(observer))
+  //      .subscribe(provider -> provider.subscribe(observer), throwable -> {
+  //        Timber.e(throwable.getMessage());
+  //      });
+  //}
+  //
+  //public static void unsubscribe(DataObserver observer) {
+  //  instance.dataProviders.filter(provider -> provider.canObserve(observer))
+  //      .subscribe(provider -> provider.unSubscribe(observer),
+  //          throwable -> {
+  //            Timber.e(throwable.getMessage());
+  //          });
+  //}
 
-  public void removeRealmChangeListener(RealmChangeListener<Realm> changeListener) {
-    Realm.getDefaultInstance().removeChangeListener(changeListener);
-  }
-
-  private void logError(Throwable throwable) {
-    Timber.d("##" + throwable.toString());
+  @NonNull private <T extends DataProvider> Observable<T> provider(Class<T> clazz) {
+    return dataProviders.filter(clazz::isInstance).map(clazz::cast);
   }
 }

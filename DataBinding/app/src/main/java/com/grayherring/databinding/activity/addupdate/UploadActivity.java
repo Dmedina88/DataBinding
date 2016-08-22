@@ -1,27 +1,43 @@
-package com.grayherring.databinding.activity;
+package com.grayherring.databinding.activity.addupdate;
 
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 import com.grayherring.databinding.R;
-import com.grayherring.databinding.base.BaseActivity;
-import com.grayherring.databinding.util.Util;
+import com.grayherring.databinding.activity.main.MainActivity;
+import com.grayherring.databinding.base.BaseBindingActivity;
+import com.grayherring.databinding.databinding.ActivityUpdateBookBinding;
 
 /**
  * Created by David on 12/5/2015.
  */
-public abstract class UploadActivity extends BaseActivity {
+public class UploadActivity
+    extends BaseBindingActivity<ActivityUpdateBookBinding, UploadVM, AddUpdateView>
+    implements AddUpdateView {
 
+  @Override protected void bindVM() {
+    Integer id = getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1);
+    if (id > -1) {
+      vm = new UploadVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1));
+    } else {
+      vm = new UploadVM();
+    }
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    //setContentView(R.layout.activity_update_book);
-    //ButterKnife.bind(this);
-    //setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+  }
+
+  @Override protected void initializeDependencyInjector() {
+
+  }
+
+  @Override protected int getLayoutId() {
+    return R.layout.activity_update_book;
   }
 
   @Override
@@ -97,5 +113,9 @@ public abstract class UploadActivity extends BaseActivity {
     builder.setMessage(getString(R.string.missing_data_dialog));
     builder.setNegativeButton("Ok", null);
     builder.show();
+  }
+
+  @Override public void onComplete(String message) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
   }
 }

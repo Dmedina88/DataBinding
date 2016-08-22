@@ -8,20 +8,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.grayherring.databinding.R;
-import com.grayherring.databinding.activity.UpdateBookActivity;
-import com.grayherring.databinding.base.BaseActivity;
+import com.grayherring.databinding.activity.addupdate.UpdateBookActivity;
+import com.grayherring.databinding.activity.main.MainActivity;
+import com.grayherring.databinding.base.BaseBindingActivity;
+import com.grayherring.databinding.databinding.ActivityDetailsBinding;
 import com.grayherring.databinding.model.Book;
 
-public class DetailsActivity extends BaseActivity {
+public class DetailsActivity
+    extends BaseBindingActivity<ActivityDetailsBinding, DetailVM, DetailView>
+    implements DetailView {
 
   private Intent shareIntent;
   private int position;
   private Book book;
 
+  @Override protected void bindVM() {
+    vm = new DetailVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, 0));
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-   // restoreViewFromState();
+    // restoreViewFromState();
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
 
@@ -34,17 +42,17 @@ public class DetailsActivity extends BaseActivity {
     super.onDestroy();
   }
 
+  @Override protected int getLayoutId() {
+    return R.layout.activity_details;
+  }
+
   @Override
   protected void onResume() {
-    shareIntent = new Intent();
-    shareIntent.setAction(Intent.ACTION_SEND);
-    shareIntent.setType("text/plain");
-    shareIntent.putExtra(Intent.EXTRA_TEXT, book.getTitle());
     super.onResume();
   }
 
   public void checkOut(View view) {
-   // actionCenter.checkOut(position, book, sourceId());
+    // actionCenter.checkOut(position, book, sourceId());
   }
 
   @SuppressLint("SetTextI18n")
@@ -101,7 +109,7 @@ public class DetailsActivity extends BaseActivity {
         Intent i = new Intent(this, UpdateBookActivity.class);
         //  i.putExtra(Constants.INDEX, position);
         // i.putExtra(Constants.BOOK_KEY, book);
-      //  actionCenter.startActivity(i, this.sourceId());
+        //  actionCenter.startActivity(i, this.sourceId());
         break;
     }
     return super.onOptionsItemSelected(item);
@@ -111,9 +119,9 @@ public class DetailsActivity extends BaseActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_detail, menu);
     MenuItem item = menu.findItem(R.id.action_share);
-  //  shareActionProvider = new ShareActionProvider(this);
-  //  MenuItemCompat.setActionProvider(item, shareActionProvider);
-  //  shareActionProvider.setShareIntent(shareIntent);
+    //  shareActionProvider = new ShareActionProvider(this);
+    //  MenuItemCompat.setActionProvider(item, shareActionProvider);
+    //  shareActionProvider.setShareIntent(shareIntent);
     return true;
   }
 
@@ -122,6 +130,4 @@ public class DetailsActivity extends BaseActivity {
     //progressDialog.show();
     //actionCenter.remove(position, book, sourceId());
   }
-
-
 }

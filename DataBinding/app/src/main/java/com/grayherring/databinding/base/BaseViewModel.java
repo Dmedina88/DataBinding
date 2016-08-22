@@ -11,10 +11,8 @@ import android.support.annotation.NonNull;
 public abstract class BaseViewModel<T extends BaseView> extends BaseObservable {
   @NonNull protected T view;
   protected T emptyView;
-  private final Class<T> viewClass;
 
-  protected BaseViewModel(Class<T> viewClass) {
-    this.viewClass = viewClass;
+  protected BaseViewModel() {
     emptyView = getEmptyView();
   }
 
@@ -24,10 +22,6 @@ public abstract class BaseViewModel<T extends BaseView> extends BaseObservable {
 
   public void detach() {
     this.view = emptyView;
-  }
-
-  public final Class<T> viewClass() {
-    return viewClass;
   }
 
   /**

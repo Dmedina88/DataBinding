@@ -55,8 +55,8 @@ dependencies {
   debugCompile "io.palaima.debugdrawer:debugdrawer-actions:$DEBUG_DRAWER_VERSION"
   compile "io.palaima.debugdrawer:debugdrawer-timber:$DEBUG_DRAWER_VERSION"
 
-  // Process Phoenix
-  debugCompile 'com.jakewharton:process-phoenix:1.0.2'
+  retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+
 
   // RxJava - Reactive Programming
   compile 'io.reactivex:rxjava:1.1.8'
@@ -70,10 +70,6 @@ dependencies {
   compile 'com.trello:rxlifecycle:0.6.1'
   compile 'com.trello:rxlifecycle-components:0.6.1'
 
-  // Retrofit - Networking
-  compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
-  compile "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
-  compile "com.squareup.retrofit2:adapter-rxjava:$RETROFIT_VERSION"
 
   // GSON - Json serializer/deserializer
   compile "com.google.code.gson:gson:2.6.2"
@@ -98,10 +94,9 @@ dependencies {
   // Calligraphy - Font Injection
   compile "uk.co.chrisjenx:calligraphy:2.1.0"
 
-  //Youtube - Player Api
-  compile files('libs/YouTubeAndroidPlayerApi.jar')
 
   // Dagger 2 - Dependency Injection
+  apt 'com.squareup:javapoet:1.7.0'
   apt daggerCompiler
   testApt daggerCompiler
   androidTestApt daggerCompiler

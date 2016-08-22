@@ -1,4 +1,4 @@
-package com.grayherring.databinding.activity;
+package com.grayherring.databinding.activity.addupdate;
 
 import android.os.Bundle;
 import android.view.View;

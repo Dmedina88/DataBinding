@@ -1,7 +1,6 @@
 package com.grayherring.databinding.activity.main;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,20 +8,25 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.grayherring.databinding.R;
-import com.grayherring.databinding.activity.AddBookActivity;
+import com.grayherring.databinding.activity.addupdate.UploadActivity;
+import com.grayherring.databinding.activity.detail.DetailsActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
-import com.grayherring.databinding.dagger.component.HomeComponent;
 import com.grayherring.databinding.databinding.ActivityMainBinding;
 import io.realm.Realm;
-import javax.inject.Inject;
 
 public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainVM, MainView>
     implements MainView {
 
+  public static final String SELECTED_ITEM = "SELECTED_ITEM";
+
   BookAdapter bookAdapter;
-  private SearchView searchView;
   MenuItem searchMenuItem;
-   Realm realm;
+  Realm realm;
+  private SearchView searchView;
+
+  @Override protected void bindVM() {
+    vm = new MainVM();
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override protected void initializeDependencyInjector() {
-    HomeComponent.Initializer.init(this).inject(this);
+    // HomeComponent.Initializer.init(this).inject(this);
   }
 
   @Override
@@ -44,7 +48,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override protected int getLayoutId() {
-    return 0;
+    return R.layout.activity_main;
   }
 
   @Override
@@ -74,11 +78,13 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override public void startAddActivity() {
-    Intent i = new Intent(this, AddBookActivity.class);
+    Intent i = new Intent(this, UploadActivity.class);
     this.startActivity(i);
   }
 
-  @Override public void startDetailActivity() {
-
+  @Override public void startDetailActivity(int position) {
+    final Intent i = new Intent(this, DetailsActivity.class);
+    i.putExtra(SELECTED_ITEM, position);
+    this.startActivity(i);
   }
 }
