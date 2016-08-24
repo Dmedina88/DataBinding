@@ -9,7 +9,6 @@ import timber.log.Timber;
 public class DetailVM extends BaseViewModel<DetailView> {
 
   private Book book;
-  private int id;
 
   public DetailVM() {
   }
@@ -22,13 +21,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
     this.book = book;
   }
 
-  public void editBookClicked(View v) {
-
-  }
-
-  public void checkout(View v) {
-
-  }
+  public void checkout(View v) {}
 
   @Override protected DetailView getEmptyView() {
     return new DetailView() {};
@@ -39,7 +32,6 @@ public class DetailVM extends BaseViewModel<DetailView> {
   }
 
   public void setBook(int id) {
-    this.id = id;
     DataCenter.getInstance().getBookById(id).subscribe(book1 -> {
       Timber.d(book1.toString());
       book = book1;

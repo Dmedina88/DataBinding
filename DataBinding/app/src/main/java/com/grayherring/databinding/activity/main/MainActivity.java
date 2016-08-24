@@ -11,17 +11,20 @@ import com.grayherring.databinding.R;
 import com.grayherring.databinding.activity.addupdate.UploadActivity;
 import com.grayherring.databinding.activity.detail.DetailsActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
+import com.grayherring.databinding.data.DataCenter;
 import com.grayherring.databinding.databinding.ActivityMainBinding;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainVM, MainView>
-    implements MainView {
+    implements MainView, SearchView.OnQueryTextListener, RealmChangeListener<Realm> {
 
   public static final String SELECTED_ITEM = "SELECTED_ITEM";
 
   BookAdapter bookAdapter;
   MenuItem searchMenuItem;
   Realm realm;
+
   private SearchView searchView;
 
   @Override protected void bindVM() {
@@ -34,7 +37,8 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     binding.mainRv.setLayoutManager(new LinearLayoutManager(this));
     bookAdapter = new BookAdapter(vm);
     binding.mainRv.setAdapter(bookAdapter);
-    // DataCenter.subscribe();
+    DataCenter.getInstance().addRealmChangeListener(this);
+
 
   }
 
@@ -45,6 +49,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    DataCenter.getInstance().removeRealmChangeListener(this);
   }
 
   @Override protected int getLayoutId() {
@@ -56,7 +61,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     getMenuInflater().inflate(R.menu.main, menu);
     searchMenuItem = menu.findItem(R.id.search);
     searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-    //searchView.setOnQueryTextListener(this);
+    searchView.setOnQueryTextListener(this);
     return true;
   }
 
@@ -64,6 +69,9 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     switch (id) {
+      case R.id.home:
+        finish();
+        break;
       case R.id.action_add:
         startAddActivity();
         break;
@@ -86,5 +94,18 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     final Intent i = new Intent(this, DetailsActivity.class);
     i.putExtra(SELECTED_ITEM, position);
     this.startActivity(i);
+  }
+
+  @Override public boolean onQueryTextSubmit(String query) {
+    return true;
+  }
+
+  @Override public boolean onQueryTextChange(String newText) {
+    vm.search(newText);
+    return false;
+  }
+
+  @Override public void onChange(Realm element) {
+    vm.getAllData(null);
   }
 }

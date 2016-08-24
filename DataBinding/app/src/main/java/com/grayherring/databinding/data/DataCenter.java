@@ -1,6 +1,7 @@
 package com.grayherring.databinding.data;
 
 import com.grayherring.databinding.model.Book;
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import java.util.ArrayList;
@@ -79,26 +80,27 @@ public class DataCenter {
         realm.commitTransaction();
         books1.add(book);
       }
+
       realm.close();
-      Observable<ArrayList<Book>> booksObservable = rx.Observable.just(books1);
-      return booksObservable;
+      return Observable.just(books1);
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   //// TODO: 5/20/16 i should really create an error action
   public Observable<Book> add(final Book book) {
-    return Observable.just(book).doOnNext(book1 -> {
+    return Observable.just(book).map(book1 -> {
       Realm realm = Realm.getDefaultInstance();
       realm.beginTransaction();
       try {
-        book.setId(realm.where(Book.class).max("id").intValue() + 1);
+        book1.setId(realm.where(Book.class).max("id").intValue() + 1);
         // no books yet
       } catch (NullPointerException e) {
-        book.setId(0);
+        book1.setId(0);
       }
       realm.copyToRealmOrUpdate(book);
       realm.commitTransaction();
       realm.close();
+      return book1;
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
@@ -233,5 +235,16 @@ public class DataCenter {
 
   private void logError(Throwable throwable) {
     Timber.d("##" + throwable.toString());
+  }
+
+  public Observable<List<Book>> searchByTitle(String newText) {
+    Realm realm = Realm.getDefaultInstance();
+    return Realm.getDefaultInstance()
+        .where(Book.class)
+        .beginsWith("title", newText, Case.INSENSITIVE)
+        .findAllAsync()
+        .asObservable().observeOn(AndroidSchedulers.mainThread())
+        .map(realm::copyFromRealm)
+        .doOnCompleted(realm::close);
   }
 }

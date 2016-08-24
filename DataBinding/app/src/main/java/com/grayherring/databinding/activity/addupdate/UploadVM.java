@@ -14,7 +14,6 @@ public class UploadVM extends BaseViewModel<AddUpdateView> {
 
   private final DataCenter dataCenter = DataCenter.getInstance();
   private Book book;
-  private int id;
 
   public UploadVM() {
     book = new Book();
@@ -50,7 +49,6 @@ public class UploadVM extends BaseViewModel<AddUpdateView> {
   }
 
   public void setBook(int id) {
-    this.id = id;
     DataCenter.getInstance().getBookById(id).subscribe(book1 -> {
       Timber.d(book1.toString());
       book = book1;
@@ -60,7 +58,7 @@ public class UploadVM extends BaseViewModel<AddUpdateView> {
 
   public void submitClicked(View v) {
     Timber.d("## submitClicked");
-    if (book.getId() == null) {
+    if (book.getId() != null && book.getId() > -1) {
       Timber.d("## submitClicked add");
       this.update();
     } else {

@@ -19,7 +19,7 @@ public class UploadActivity
 
   @Override protected void bindVM() {
     Integer id = getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1);
-    if (id > -1) {
+    if (id !=null && id > -1) {
       vm = new UploadVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1));
     } else {
       vm = new UploadVM();

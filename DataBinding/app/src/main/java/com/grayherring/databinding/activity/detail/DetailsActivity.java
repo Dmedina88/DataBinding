@@ -8,19 +8,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.grayherring.databinding.R;
-import com.grayherring.databinding.activity.addupdate.UpdateBookActivity;
+import com.grayherring.databinding.activity.addupdate.UploadActivity;
 import com.grayherring.databinding.activity.main.MainActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
+import com.grayherring.databinding.data.DataCenter;
 import com.grayherring.databinding.databinding.ActivityDetailsBinding;
-import com.grayherring.databinding.model.Book;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 public class DetailsActivity
     extends BaseBindingActivity<ActivityDetailsBinding, DetailVM, DetailView>
-    implements DetailView {
+    implements DetailView, RealmChangeListener<Realm> {
 
   private Intent shareIntent;
-  private int position;
-  private Book book;
 
   @Override protected void bindVM() {
     vm = new DetailVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, 0));
@@ -31,6 +31,7 @@ public class DetailsActivity
     super.onCreate(savedInstanceState);
     // restoreViewFromState();
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    DataCenter.getInstance().addRealmChangeListener(this);
   }
 
   @Override protected void initializeDependencyInjector() {
@@ -40,6 +41,7 @@ public class DetailsActivity
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    DataCenter.getInstance().addRealmChangeListener(this);
   }
 
   @Override protected int getLayoutId() {
@@ -102,14 +104,16 @@ public class DetailsActivity
 
     int id = item.getItemId();
     switch (id) {
+      case R.id.home:
+        finish();
+        break;
       case R.id.action_delete:
         deleteBook();
         break;
       case R.id.action_update:
-        Intent i = new Intent(this, UpdateBookActivity.class);
-        //  i.putExtra(Constants.INDEX, position);
-        // i.putExtra(Constants.BOOK_KEY, book);
-        //  actionCenter.startActivity(i, this.sourceId());
+        Intent i = new Intent(this, UploadActivity.class);
+        i.putExtra(MainActivity.SELECTED_ITEM, vm.getBook().getId());
+        this.startActivity(i);
         break;
     }
     return super.onOptionsItemSelected(item);
@@ -129,5 +133,9 @@ public class DetailsActivity
     //progressDialog.setMessage(getString(R.string.deleting));
     //progressDialog.show();
     //actionCenter.remove(position, book, sourceId());
+  }
+
+  @Override public void onChange(Realm element) {
+    vm.setBook(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, 0));
   }
 }
