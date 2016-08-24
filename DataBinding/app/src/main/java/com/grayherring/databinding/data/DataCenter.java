@@ -4,7 +4,13 @@ import com.grayherring.databinding.model.Book;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import rx.Observable;
@@ -17,6 +23,17 @@ import timber.log.Timber;
 public class DataCenter {
 
   private static DataCenter instance;
+
+  public static DataCenter init(DataCenter dataCenter) {
+    if (instance == null) {
+      synchronized (DataCenter.class) {
+        if (instance == null) {
+          instance = dataCenter;
+        }
+      }
+    }
+    return instance;
+  }
 
   public static DataCenter init(List<DataProvider> dataProviders) {
     if (instance == null) {
@@ -62,7 +79,7 @@ public class DataCenter {
     return Observable.just(books).concatMap(books1 -> {
       Book book;
       Realm realm = Realm.getDefaultInstance();
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 200; i++) {
         book = new Book();
         realm.beginTransaction();
         try {
@@ -71,7 +88,7 @@ public class DataCenter {
         } catch (NullPointerException e) {
           book.setId(0);
         }
-        book.setTitle("Flux Book V" + i);
+        book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());
         book.setAuthor("Grayherring BattleStar");
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
@@ -105,20 +122,23 @@ public class DataCenter {
   }
 
   public Observable<Book> remove(final Book book) {
-    return Observable.just(book).doOnNext(book1 -> {
-      Realm realm = Realm.getDefaultInstance();
-      realm.where(Book.class)
-          .equalTo("id", book.getId())
-          .findFirstAsync()
-          .asObservable()
-          .concatMap(realmObject -> {
-            {
+
+    Realm realm = Realm.getDefaultInstance();
+    return realm.where(Book.class)
+        .equalTo("id", book.getId())
+        .findFirstAsync()
+        .asObservable()
+        .concatMap(realmObject -> {
+          {
+            if (realmObject.isLoaded() && realmObject.isValid()) {
+              realm.beginTransaction();
               realmObject.deleteFromRealm();
-              return Observable.just(book);
+              realm.commitTransaction();
             }
-          })
-          .doOnError(e -> realm.close());
-    }).observeOn(AndroidSchedulers.mainThread());
+            return Observable.just(book);
+          }
+        })
+        .doOnError(e -> Timber.e(e.toString()));
   }
 
   public Observable<List<Book>> getAllData() {
@@ -131,11 +151,16 @@ public class DataCenter {
 
   public Observable<Book> getBookById(int id) {
     Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).equalTo("id", id).findFirst().asObservable()
-        .map(realmObject -> (Book) realmObject)
-        .map(realm::copyFromRealm)
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnCompleted(realm::close);
+    RealmObject realmObject = realm.where(Book.class).equalTo("id", id).findFirst();
+    if (realmObject != null) {
+      return realmObject.asObservable()
+          .map(realmObject1 -> (Book) realmObject1)
+          .map(realm::copyFromRealm)
+          .observeOn(AndroidSchedulers.mainThread())
+          .doOnCompleted(realm::close);
+    } else {
+      return Observable.empty();
+    }
   }
 
   public Observable<Book> update(final Book book) {
@@ -148,82 +173,30 @@ public class DataCenter {
           bgRealm.commitTransaction();
           bgRealm.close();
           return book;
-        }).doOnError(this::logError);
+        }).doOnError(this::logError).doOnCompleted(realm::close);
   }
-/*
-  public void checkOut(final Integer position, final Book book, final String source) {
-    DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    Realm realm = Realm.getDefaultInstance();
-    Date today = Calendar.getInstance().getTime();
-    String date = df.format(today);
-    book.setLastCheckedOutBy("soy souse");
-    book.setLastCheckedOut(date);
 
-    realm.asObservable()
+  public Observable<Book> checkOut(final Book book) {
+    Realm realm = Realm.getDefaultInstance();
+
+    return realm.asObservable()
+        .first()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(bgRealm -> {
+        .map(bgRealm -> {
           bgRealm.beginTransaction();
+          DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+          Date today = Calendar.getInstance().getTime();
+          String date = df.format(today);
+          book.setLastCheckedOutBy("soy souse");
+          book.setLastCheckedOut(date);
           bgRealm.copyToRealmOrUpdate(book);
           bgRealm.commitTransaction();
           bgRealm.close();
-          SwagAction successAction = new SwagAction(UPDATE_BOOK);
-          successAction.source = source;
-          successAction.payload.pos = position;
-          successAction.payload.books.add(book);
-          dispatcher.sendAction(successAction);
-        }, throwable -> {
+          return book;
+        }).doOnCompleted(realm::close).doOnError(throwable -> {
           Timber.e("checkOut" + throwable.getLocalizedMessage());
-          realm.close();
-        }, realm::close);
+        });
   }
-
-  public void filter(final String filter) {
-    SwagAction filterAction = new SwagAction(FILTER);
-    filterAction.payload.filter = filter;
-    dispatcher.sendAction(filterAction);
-  }
-
-  public void undoFilter() {
-    SwagAction filterAction = new SwagAction(FILTER_UNDO);
-    dispatcher.sendAction(filterAction);
-  }
-
-  public void selectBook(Book book, int index, String source) {
-    SwagAction selectBook = new SwagAction(SELECT_BOOK);
-    selectBook.source = source;
-
-    selectBook.payload.books.add(book);
-    selectBook.payload.pos = index;
-    dispatcher.sendAction(selectBook);
-  }
-
-  public void startActivity(Intent intent, String source) {
-    SwagAction activityAction = new SwagAction(START_ACTIVITY);
-    activityAction.source = source;
-    activityAction.payload.intent = intent;
-    dispatcher.sendAction(activityAction);
-  }
-
-  public void backPress(String s) {
-    SwagAction backPress = new SwagAction(BACK_PRESS);
-    backPress.source = s;
-    dispatcher.sendAction(backPress);
-  }
-
-
-
-  private void failure(Throwable throwable) {
-    Timber.d(throwable.getLocalizedMessage());
-    SwagAction failAction = new SwagAction(DATA_FAIL);
-    dispatcher.sendAction(failAction);
-  }
-
-  private void success(List<Book> books) {
-    SwagAction successAction = new SwagAction(DATA_CHANGE_NEW);
-    successAction.payload.books.addAll(books);
-    dispatcher.sendAction(successAction);
-  }
-  */
 
   public void addRealmChangeListener(RealmChangeListener<Realm> changeListener) {
     Realm.getDefaultInstance().addChangeListener(changeListener);

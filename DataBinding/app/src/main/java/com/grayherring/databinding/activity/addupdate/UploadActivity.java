@@ -19,7 +19,7 @@ public class UploadActivity
 
   @Override protected void bindVM() {
     Integer id = getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1);
-    if (id !=null && id > -1) {
+    if (id != null && id > -1) {
       vm = new UploadVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1));
     } else {
       vm = new UploadVM();
@@ -29,7 +29,6 @@ public class UploadActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
 
   @Override protected void initializeDependencyInjector() {
@@ -44,56 +43,6 @@ public class UploadActivity
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.upload_menu, menu);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
-    //switch (id) {
-    //  case android.R.id.home:
-    //    if (Util.checkFieldFull(titleEditText, authorEditText, publisherEditText, categoriesEditText)) {
-    //      showUnsavedDataDialog();
-    //    } else {
-    //      NavUtils.navigateUpFromSameTask(this);
-    //    }
-    //    break;
-    //  case R.id.action_done:
-    //    this.onFinish();
-    //    break;
-    //}
-
-    return true;
-  }
-
-  //HashMap<String, String> getParams() {
-  //  HashMap<String, String> params = new HashMap<>();
-  //  params.put(Constants.AUTHOR_FIELD, authorEditText.getText().toString());
-  //  params.put(Constants.CATEGORIES_FIELD, categoriesEditText.getText().toString());
-  //  params.put(Constants.PUBLISHER_FIELD, publisherEditText.getText().toString());
-  //  params.put(Constants.TITLE_FIELD, titleEditText.getText().toString());
-  //  return params;
-  //}
-  //
-  //Book newBook(Book oldBook) {
-  //  Book book = new Book();
-  //  book.setAuthor(authorEditText.getText().toString());
-  //  book.setCategories(categoriesEditText.getText().toString());
-  //  book.setPublisher(publisherEditText.getText().toString());
-  //  book.setTitle(titleEditText.getText().toString());
-  //  if(oldBook!=null) {
-  //    book.setId(oldBook.getId());
-  //    book.setLastCheckedOut(oldBook.getLastCheckedOut());
-  //    book.setLastCheckedOutBy(oldBook.getLastCheckedOutBy());
-  //  }
-  //  return book;
-  //}
-
-  public void onFinish() {
-    //if (Util.checkFieldFull(titleEditText, authorEditText, publisherEditText, categoriesEditText)) {
-    //  showUnsavedDataDialog();
-    //} else {
-    //  finish();
-    //}
   }
 
   protected void showUnsavedDataDialog() {

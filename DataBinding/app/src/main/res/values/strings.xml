@@ -7,7 +7,7 @@
   <string name="delete_all">Delete All</string>
   <string name="search">search</string>
 
-  <string name="categories">Tags </string>
+  <string name="categories">Tags %s</string>
   <string name="last_checked_out">Last Checked Out: %s</string>
   <string name="publisher">Publisher: %s</string>
   <string name="checkout">Checkout</string>

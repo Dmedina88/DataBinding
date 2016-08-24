@@ -54,21 +54,21 @@
           android:id="@+id/book_categories"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@string/categories"
+          android:text="@{String.format(@string/categories, vm.book.categories)}"
           />
 
       <TextView
           android:id="@+id/LastOut"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@string/last_checked_out"
+          android:text="@{String.format(@string/last_checked_out, vm.book.lastCheckedOutBy)}"
           />
 
       <TextView
           android:id="@+id/book_checkout_info"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text=""
+          android:text="@{vm.book.lastCheckedOut}"
           />
 
       <Button

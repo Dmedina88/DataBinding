@@ -16,6 +16,7 @@ import rx.Subscription;
 public class MainVM extends BaseViewModel<MainView> {
 
   ObservableArrayList<Book> books = new ObservableArrayList<>();
+  private Subscription dataSubscription;
 
   public MainVM() {
     super();
@@ -25,8 +26,6 @@ public class MainVM extends BaseViewModel<MainView> {
     return books;
   }
 
-  private Subscription dataSubscription;
-
   public void seed() {
     DataCenter.getInstance().seed().subscribe(newBooks -> {
       books.addAll(newBooks);
@@ -35,7 +34,6 @@ public class MainVM extends BaseViewModel<MainView> {
 
   public void delete() {
     DataCenter.getInstance().deleteAllData().subscribe(value -> {
-      //// TODO: 8/20/16  maybe do something with this lol
       if (value) {
         books.clear();
       }

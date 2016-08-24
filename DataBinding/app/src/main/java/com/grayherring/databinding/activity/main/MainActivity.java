@@ -38,8 +38,6 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     bookAdapter = new BookAdapter(vm);
     binding.mainRv.setAdapter(bookAdapter);
     DataCenter.getInstance().addRealmChangeListener(this);
-
-
   }
 
   @Override protected void initializeDependencyInjector() {
@@ -69,9 +67,6 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     switch (id) {
-      case R.id.home:
-        finish();
-        break;
       case R.id.action_add:
         startAddActivity();
         break;
