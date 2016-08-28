@@ -3,6 +3,8 @@ package com.grayherring.databinding.activity.addupdate;
 import android.view.View;
 import com.grayherring.databinding.base.BaseViewModel;
 import com.grayherring.databinding.data.DataCenter;
+import com.grayherring.databinding.data.SwagDataCenter;
+import com.grayherring.databinding.model.Author;
 import com.grayherring.databinding.model.Book;
 import timber.log.Timber;
 
@@ -12,11 +14,12 @@ import timber.log.Timber;
 
 public class UploadVM extends BaseViewModel<AddUpdateView> {
 
-  private final DataCenter dataCenter = DataCenter.getInstance();
+  private final DataCenter dataCenter = SwagDataCenter.getInstance();
   private Book book;
 
   public UploadVM() {
     book = new Book();
+    book.setAuthor(new Author());
     this.notifyChange();
   }
 
@@ -49,7 +52,7 @@ public class UploadVM extends BaseViewModel<AddUpdateView> {
   }
 
   public void setBook(int id) {
-    DataCenter.getInstance().getBookById(id).subscribe(book1 -> {
+    SwagDataCenter.getInstance().getBookById(id).subscribe(book1 -> {
       Timber.d(book1.toString());
       book = book1;
       this.notifyChange();
@@ -68,10 +71,8 @@ public class UploadVM extends BaseViewModel<AddUpdateView> {
   }
 
   @Override protected AddUpdateView getEmptyView() {
-    return new AddUpdateView() {
-      @Override public void onComplete(String message) {
+    return message -> {
 
-      }
     };
   }
 }

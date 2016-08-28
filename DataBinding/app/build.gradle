@@ -3,6 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 
+
 android {
   compileSdkVersion 23
   buildToolsVersion "23.0.3"
@@ -69,7 +70,6 @@ dependencies {
   compile 'com.jakewharton.rxrelay:rxrelay:1.0.0'
   compile 'com.trello:rxlifecycle:0.6.1'
   compile 'com.trello:rxlifecycle-components:0.6.1'
-
 
   // GSON - Json serializer/deserializer
   compile "com.google.code.gson:gson:2.6.2"

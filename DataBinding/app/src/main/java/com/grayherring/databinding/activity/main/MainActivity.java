@@ -11,7 +11,7 @@ import com.grayherring.databinding.R;
 import com.grayherring.databinding.activity.addupdate.UploadActivity;
 import com.grayherring.databinding.activity.detail.DetailsActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
-import com.grayherring.databinding.data.DataCenter;
+import com.grayherring.databinding.data.SwagDataCenter;
 import com.grayherring.databinding.databinding.ActivityMainBinding;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -25,8 +25,6 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   MenuItem searchMenuItem;
   Realm realm;
 
-  private SearchView searchView;
-
   @Override protected void bindVM() {
     vm = new MainVM();
   }
@@ -37,7 +35,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     binding.mainRv.setLayoutManager(new LinearLayoutManager(this));
     bookAdapter = new BookAdapter(vm);
     binding.mainRv.setAdapter(bookAdapter);
-    DataCenter.getInstance().addRealmChangeListener(this);
+    SwagDataCenter.getInstance().addRealmChangeListener(this);
   }
 
   @Override protected void initializeDependencyInjector() {
@@ -47,7 +45,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    DataCenter.getInstance().removeRealmChangeListener(this);
+    SwagDataCenter.getInstance().removeRealmChangeListener(this);
   }
 
   @Override protected int getLayoutId() {
@@ -58,7 +56,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main, menu);
     searchMenuItem = menu.findItem(R.id.search);
-    searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
     searchView.setOnQueryTextListener(this);
     return true;
   }
@@ -81,14 +79,11 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override public void startAddActivity() {
-    Intent i = new Intent(this, UploadActivity.class);
-    this.startActivity(i);
+  UploadActivity.start(this,-1);
   }
 
-  @Override public void startDetailActivity(int position) {
-    final Intent i = new Intent(this, DetailsActivity.class);
-    i.putExtra(SELECTED_ITEM, position);
-    this.startActivity(i);
+  @Override public void startDetailActivity(int id) {
+   DetailsActivity.start(this,id);
   }
 
   @Override public boolean onQueryTextSubmit(String query) {

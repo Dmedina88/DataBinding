@@ -39,7 +39,7 @@
           android:id="@+id/book_authors"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="@{vm.book.author}"
+          android:text="@{vm.book.author.name}"
           android:textAppearance="?android:attr/textAppearanceMedium"
           />
 
@@ -79,6 +79,16 @@
           android:layout_marginTop="10dp"
           android:onClick="@{vm::checkout}"
           android:text="@string/checkout"
+          />
+
+      <Button
+          android:id="@+id/btn_other_books"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="10dp"
+          android:onClick="@{vm::showOtherBooks}"
+          android:text="@string/other_books_by_author"
           />
 
     </LinearLayout>

@@ -1,11 +1,15 @@
 package com.grayherring.databinding.activity.addupdate;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 import com.grayherring.databinding.R;
+import com.grayherring.databinding.activity.detail.DetailVM;
+import com.grayherring.databinding.activity.detail.DetailsActivity;
 import com.grayherring.databinding.activity.main.MainActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
 import com.grayherring.databinding.databinding.ActivityUpdateBookBinding;
@@ -17,10 +21,16 @@ public class UploadActivity
     extends BaseBindingActivity<ActivityUpdateBookBinding, UploadVM, AddUpdateView>
     implements AddUpdateView {
 
+  public static void start(final Context context,final int id) {
+    final Intent i = new Intent(context, UploadActivity.class);
+    i.putExtra(DetailsActivity.SELECTED_ITEM,id);
+    context.startActivity(i);
+  }
+
   @Override protected void bindVM() {
-    Integer id = getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1);
-    if (id != null && id > -1) {
-      vm = new UploadVM(getIntent().getIntExtra(MainActivity.SELECTED_ITEM, -1));
+    int id = getIntent().getIntExtra(DetailsActivity.SELECTED_ITEM, -1);
+    if (id > -1) {
+      vm = new UploadVM(getIntent().getIntExtra(DetailsActivity.SELECTED_ITEM, -1));
     } else {
       vm = new UploadVM();
     }

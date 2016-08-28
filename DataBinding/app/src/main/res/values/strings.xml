@@ -30,5 +30,6 @@
   <string name="missing_data_dialog">Fill out all fields before submitting.</string>
   <string name="update_book">Update Book</string>
   <string name="add_book_title">Add Book</string>
+  <string name="other_books_by_author">Other books by Author</string>
 
 </resources>

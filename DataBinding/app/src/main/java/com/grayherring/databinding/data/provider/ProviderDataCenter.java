@@ -79,7 +79,7 @@ public class ProviderDataCenter {
           book.setId(0);
         }
         book.setTitle("Flux Book V" + i);
-        book.setAuthor("Grayherring BattleStar");
+        book.getAuthor().setName("Grayherring BattleStar " + i );
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
