@@ -12,12 +12,10 @@ public class DetailVM extends BaseViewModel<DetailView> {
   Subscription subscription;
   private Book book;
 
-
-
   public DetailVM(int id, Book book) {
-    if(book != null){
+    if (book != null) {
       setBook(book);
-    }else {
+    } else {
       setBook(id);
     }
   }
@@ -36,9 +34,13 @@ public class DetailVM extends BaseViewModel<DetailView> {
   }
 
   public void showOtherBooks(View v) {
-    view.listOtherBooks(book.getAuthor().getBooks().toString());
-  }
 
+    String string = "";
+    for (Book book1 : book.getAuthor().getBooks()) {
+      string = string + ", " + book1.getTitle();
+    }
+    view.listOtherBooks(string);
+  }
 
   @Override protected DetailView getEmptyView() {
     return new DetailView() {
@@ -75,5 +77,4 @@ public class DetailVM extends BaseViewModel<DetailView> {
       view.finish();
     });
   }
-
 }

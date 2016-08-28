@@ -1,5 +1,6 @@
 package com.grayherring.databinding.data;
 
+import com.grayherring.databinding.model.Author;
 import com.grayherring.databinding.model.Book;
 import io.realm.Case;
 import io.realm.Realm;
@@ -16,6 +17,8 @@ import java.util.Random;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
+
+import static android.R.attr.author;
 
 /**
  * Created by davidmedina on 4/22/16.
@@ -46,9 +49,12 @@ public class DefaultDataCenter implements DataCenter {
     Random random = new Random();
     ArrayList<Book> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
+
       Book book;
+      Author author;
       Realm realm = Realm.getDefaultInstance();
-      for (int i = 0; i < 200; i++) {
+
+      for (int i = 0; i < 7; i++) {
         book = new Book();
         realm.beginTransaction();
         try {
@@ -57,14 +63,19 @@ public class DefaultDataCenter implements DataCenter {
         } catch (NullPointerException e) {
           book.setId(0);
         }
+        author = new Author();
         book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());
-        book.setAuthor("Grayherring BattleStar");
+        author.setName("DAveHerring "+ i);
+        book.setAuthor(author);
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
+
+        books1.add(book);
+        author.setBooks(books1);
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
-        books1.add(book);
+
       }
 
       realm.close();
@@ -72,7 +83,6 @@ public class DefaultDataCenter implements DataCenter {
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
-  //// TODO: 5/20/16 i should really create an error action
   @Override public Observable<Book> add(final Book book) {
     return Observable.just(book).map(book1 -> {
       Realm realm = Realm.getDefaultInstance();

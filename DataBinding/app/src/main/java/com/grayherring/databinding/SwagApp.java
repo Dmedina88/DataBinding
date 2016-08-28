@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import com.grayherring.databinding.dagger.component.AppComponent;
 import com.grayherring.databinding.data.DefaultDataCenter;
-import com.grayherring.databinding.data.RealmDataCenter;
 import com.grayherring.databinding.data.SwagDataCenter;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -29,7 +28,7 @@ public class SwagApp extends Application {
     component = initComponent();
     component.inject(this);
 
-    SwagDataCenter.init(new RealmDataCenter());
+    SwagDataCenter.init(new DefaultDataCenter());
     //ArrayList<DataProvider> dataProviders = new ArrayList<>();
     //
     //dataProviders.add(new BookAddedDataProvider());

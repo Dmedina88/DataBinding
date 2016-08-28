@@ -41,13 +41,13 @@ public class Author implements RealmModel {
     return books;
   }
 
-  public void setBooks(RealmList<Book> books) {
-    this.books = books;
-  }
-
   public void setBooks(List<Book> books) {
     RealmList<Book> realmList = new RealmList<>();
     realmList.addAll(books);
     this.books = realmList;
+  }
+
+  public void setBooks(RealmList<Book> books) {
+    this.books = books;
   }
 }

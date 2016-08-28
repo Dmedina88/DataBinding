@@ -67,7 +67,6 @@ public class DetailsActivity
   }
 
   public boolean onOptionsItemSelected(MenuItem item) {
-
     int id = item.getItemId();
     switch (id) {
       case R.id.action_delete:
@@ -82,10 +81,6 @@ public class DetailsActivity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_detail, menu);
-    MenuItem item = menu.findItem(R.id.action_share);
-    //  shareActionProvider = new ShareActionProvider(this);
-    //  MenuItemCompat.setActionProvider(item, shareActionProvider);
-    //  shareActionProvider.setShareIntent(shareIntent);
     return true;
   }
 

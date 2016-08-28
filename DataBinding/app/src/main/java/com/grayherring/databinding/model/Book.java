@@ -30,11 +30,12 @@ public class Book extends RealmObject {
     return author;
   }
 
-  public void setAuthor(Author author) {
-    this.author = author;
-  }
   public void setAuthor(String author) {
     this.author.setName(author);
+  }
+
+  public void setAuthor(Author author) {
+    this.author = author;
   }
 
   public String getCategories() {
