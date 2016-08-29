@@ -37,7 +37,7 @@ public class DetailsActivity
 
   @Override protected void bindVM() {
     Intent i = getIntent();
-    vm = new DetailVM(i.getIntExtra(SELECTED_ITEM, 0), i.getParcelableExtra(SELECTED_ITEM));
+    vm = new DetailVM(i.getIntExtra(SELECTED_ITEM_ID, -1), i.getParcelableExtra(SELECTED_ITEM));
   }
 
   @Override

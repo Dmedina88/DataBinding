@@ -6,16 +6,19 @@ import com.grayherring.databinding.data.SwagDataCenter;
 import com.grayherring.databinding.model.Book;
 import com.grayherring.databinding.util.RxUtil;
 import rx.Subscription;
+import timber.log.Timber;
 
 public class DetailVM extends BaseViewModel<DetailView> {
 
-  Subscription subscription;
+  private Subscription subscription;
   private Book book;
 
   public DetailVM(int id, Book book) {
     if (book != null) {
+      Timber.d(book.toString());
       setBook(book);
     } else {
+      Timber.d("##" + id);
       setBook(id);
     }
   }
@@ -36,8 +39,9 @@ public class DetailVM extends BaseViewModel<DetailView> {
   public void showOtherBooks(View v) {
 
     String string = "";
+    Timber.d("##" +  book.getAuthor().getBooks().size());
     for (Book book1 : book.getAuthor().getBooks()) {
-      string = string + ", " + book1.getTitle();
+      string = string.concat( ", " + book1.getTitle() );
     }
     view.listOtherBooks(string);
   }

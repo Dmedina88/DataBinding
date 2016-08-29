@@ -6,6 +6,7 @@ import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,6 +29,7 @@ public class DefaultDataCenter implements DataCenter {
 
   @Override public Observable<Boolean> deleteAllData() {
     Realm realm = Realm.getDefaultInstance();
+
     return realm.asObservable().first().map(realm1 -> {
       Boolean value;
       try {
@@ -72,7 +74,7 @@ public class DefaultDataCenter implements DataCenter {
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
 
         books1.add(book);
-        author.setBooks(books1);
+        author.setBooks(books);
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
 
@@ -107,6 +109,7 @@ public class DefaultDataCenter implements DataCenter {
         .equalTo("id", book.getId())
         .findFirstAsync()
         .asObservable()
+        .filter(Book::isLoaded)
         .concatMap(realmObject -> {
           {
             if (realmObject.isLoaded() && realmObject.isValid()) {
@@ -122,7 +125,9 @@ public class DefaultDataCenter implements DataCenter {
 
   @Override public Observable<List<Book>> getAllData() {
     Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).findAllAsync().asObservable()
+    return realm.where(Book.class).findAllAsync()
+        .asObservable()
+        .filter(RealmResults::isLoaded)
         .observeOn(AndroidSchedulers.mainThread())
         .map(realm::copyFromRealm)
         .doOnCompleted(realm::close);
