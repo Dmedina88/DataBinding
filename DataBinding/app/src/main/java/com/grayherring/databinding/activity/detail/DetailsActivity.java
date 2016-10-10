@@ -23,13 +23,13 @@ public class DetailsActivity
   public static final String SELECTED_ITEM = "SELECTED_ITEM";
   public static final String SELECTED_ITEM_ID = "SELECTED_ITEM_ID";
 
-  public static void start(Context context, int id) {
+  public static void start(final Context context, final int id) {
     final Intent i = new Intent(context, DetailsActivity.class);
     i.putExtra(SELECTED_ITEM_ID, id);
     context.startActivity(i);
   }
 
-  public static void start(Context context, Book book) {
+  public static void start(final Context context, final Book book) {
     final Intent i = new Intent(context, DetailsActivity.class);
     i.putExtra(SELECTED_ITEM, Parcels.wrap(book));
     context.startActivity(i);
@@ -41,7 +41,7 @@ public class DetailsActivity
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     // restoreViewFromState();
     SwagDataCenter.getInstance().addRealmChangeListener(this);
@@ -66,8 +66,8 @@ public class DetailsActivity
     super.onResume();
   }
 
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    final int id = item.getItemId();
     switch (id) {
       case R.id.action_delete:
         vm.deleteBook();
@@ -79,16 +79,16 @@ public class DetailsActivity
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  public boolean onCreateOptionsMenu(final Menu menu) {
     getMenuInflater().inflate(R.menu.menu_detail, menu);
     return true;
   }
 
-  @Override public void onChange(Realm element) {
+  @Override public void onChange(final Realm element) {
     vm.setBook(getIntent().getIntExtra(SELECTED_ITEM, 0));
   }
 
-  @Override public void listOtherBooks(String list) {
+  @Override public void listOtherBooks(final String list) {
     new AlertDialog
         .Builder(this)
         .setMessage(list)

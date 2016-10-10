@@ -1,11 +1,9 @@
 package com.grayherring.databinding.model;
 
-import io.realm.AuthorRealmProxy;
 import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.annotations.RealmClass;
 import java.util.List;
-import org.parceler.Parcel;
 
 /**
  * Created by davidmedina on 8/27/16.
@@ -41,13 +39,13 @@ public class Author implements RealmModel {
     return books;
   }
 
+  public void setBooks(RealmList<Book> books) {
+    this.books = books;
+  }
+
   public void setBooks(List<Book> books) {
     RealmList<Book> realmList = new RealmList<>();
     realmList.addAll(books);
     this.books = realmList;
-  }
-
-  public void setBooks(RealmList<Book> books) {
-    this.books = books;
   }
 }

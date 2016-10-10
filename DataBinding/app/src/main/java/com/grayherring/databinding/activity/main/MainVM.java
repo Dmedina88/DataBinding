@@ -45,25 +45,25 @@ public class MainVM extends BaseViewModel<MainView> {
       @Override public void startAddActivity() {
       }
 
-      @Override public void startDetailActivity(int position) {
+      @Override public void startDetailActivity(final int position) {
       }
     };
   }
 
-  public void getAllData(View v) {
+  public void getAllData(final View v) {
     RxUtil.unSubscribeIfNeeded(dataSubscription);
     dataSubscription = SwagDataCenter.getInstance().getAllData().subscribe(books1 -> {
-      MainVM.this.books.clear();
-      MainVM.this.books.addAll(books1);
-    }
+          MainVM.this.books.clear();
+          MainVM.this.books.addAll(books1);
+        }
     );
   }
 
-  public void startAddActivity(View v) {
+  public void startAddActivity(final View v) {
     view.startAddActivity();
   }
 
-  @Override public void attach(MainView view) {
+  @Override public void attach(final MainView view) {
     super.attach(view);
   }
 
@@ -72,11 +72,11 @@ public class MainVM extends BaseViewModel<MainView> {
     RxUtil.unSubscribeIfNeeded(dataSubscription);
   }
 
-  public void startDetailView(int position) {
+  public void startDetailView(final int position) {
     view.startDetailActivity(position);
   }
 
-  public void search(String newText) {
+  public void search(final String newText) {
     RxUtil.unSubscribeIfNeeded(dataSubscription);
     dataSubscription = SwagDataCenter.getInstance().searchByTitle(newText).subscribe(
         books1 -> {

@@ -160,7 +160,7 @@ public class RealmDataCenter implements DataCenter {
         .first()
         .observeOn(AndroidSchedulers.mainThread())
         .map(bgRealm -> {
-         // bgRealm.beginTransaction();
+          // bgRealm.beginTransaction();
           DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
           Date today = Calendar.getInstance().getTime();
           String date = df.format(today);
@@ -194,7 +194,7 @@ public class RealmDataCenter implements DataCenter {
         .beginsWith("title", newText, Case.INSENSITIVE)
         .findAllAsync()
         .asObservable().observeOn(AndroidSchedulers.mainThread())
-       .map(stuff -> {
+        .map(stuff -> {
               List<Book> list = new ArrayList<>();
               list.addAll(stuff);
               return list;

@@ -13,7 +13,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
   private Subscription subscription;
   private Book book;
 
-  public DetailVM(int id, Book book) {
+  public DetailVM(final int id, final Book book) {
     if (book != null) {
       Timber.d(book.toString());
       setBook(book);
@@ -28,20 +28,20 @@ public class DetailVM extends BaseViewModel<DetailView> {
     super.detach();
   }
 
-  public void setBook(Book book) {
+  public void setBook(final Book book) {
     this.book = book;
   }
 
-  public void checkout(View v) {
+  public void checkout(final View v) {
     checkout();
   }
 
-  public void showOtherBooks(View v) {
+  public void showOtherBooks(final View v) {
 
     String string = "";
-    Timber.d("##" +  book.getAuthor().getBooks().size());
-    for (Book book1 : book.getAuthor().getBooks()) {
-      string = string.concat( ", " + book1.getTitle() );
+    Timber.d("##" + book.getAuthor().getBooks().size());
+    for (final Book book1 : book.getAuthor().getBooks()) {
+      string = string.concat(", " + book1.getTitle());
     }
     view.listOtherBooks(string);
   }
@@ -52,7 +52,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
 
       }
 
-      @Override public void listOtherBooks(String list) {
+      @Override public void listOtherBooks(final String list) {
 
       }
     };
@@ -62,7 +62,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
     return book;
   }
 
-  public void setBook(int id) {
+  public void setBook(final int id) {
     SwagDataCenter.getInstance().getBookById(id).subscribe(book1 -> {
       book = book1;
       this.notifyChange();

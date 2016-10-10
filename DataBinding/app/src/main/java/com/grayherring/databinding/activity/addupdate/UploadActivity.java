@@ -3,14 +3,11 @@ package com.grayherring.databinding.activity.addupdate;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.widget.Toast;
 import com.grayherring.databinding.R;
-import com.grayherring.databinding.activity.detail.DetailVM;
 import com.grayherring.databinding.activity.detail.DetailsActivity;
-import com.grayherring.databinding.activity.main.MainActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
 import com.grayherring.databinding.databinding.ActivityUpdateBookBinding;
 
@@ -21,9 +18,9 @@ public class UploadActivity
     extends BaseBindingActivity<ActivityUpdateBookBinding, UploadVM, AddUpdateView>
     implements AddUpdateView {
 
-  public static void start(final Context context,final int id) {
+  public static void start(final Context context, final int id) {
     final Intent i = new Intent(context, UploadActivity.class);
-    i.putExtra(DetailsActivity.SELECTED_ITEM,id);
+    i.putExtra(DetailsActivity.SELECTED_ITEM, id);
     context.startActivity(i);
   }
 
@@ -37,7 +34,7 @@ public class UploadActivity
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }
 
@@ -50,13 +47,13 @@ public class UploadActivity
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  public boolean onCreateOptionsMenu(final Menu menu) {
     getMenuInflater().inflate(R.menu.upload_menu, menu);
     return true;
   }
 
   protected void showUnsavedDataDialog() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
     builder.setTitle(getString(R.string.unsaved));
     builder.setMessage("Are you sure you want to leave with unsaved changes.");
     builder.setPositiveButton("OK", (dialog, which) -> {
@@ -67,14 +64,14 @@ public class UploadActivity
   }
 
   protected void showMissingDataDialog() {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CustomDialog);
     builder.setTitle(getString(R.string.missing_data));
     builder.setMessage(getString(R.string.missing_data_dialog));
     builder.setNegativeButton("Ok", null);
     builder.show();
   }
 
-  @Override public void onComplete(String message) {
+  @Override public void onComplete(final String message) {
     Toast.makeText(this, message, Toast.LENGTH_LONG).show();
   }
 }

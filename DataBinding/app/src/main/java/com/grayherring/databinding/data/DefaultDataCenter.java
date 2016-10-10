@@ -19,16 +19,13 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import timber.log.Timber;
 
-import static android.R.attr.author;
-
 /**
  * Created by davidmedina on 4/22/16.
  */
 public class DefaultDataCenter implements DataCenter {
 
-
   @Override public Observable<Boolean> deleteAllData() {
-    Realm realm = Realm.getDefaultInstance();
+    final Realm realm = Realm.getDefaultInstance();
 
     return realm.asObservable().first().map(realm1 -> {
       Boolean value;
@@ -48,8 +45,8 @@ public class DefaultDataCenter implements DataCenter {
   }
 
   @Override public Observable<ArrayList<Book>> seed() {
-    Random random = new Random();
-    ArrayList<Book> books = new ArrayList<>();
+    final Random random = new Random();
+    final ArrayList<Book> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
 
       Book book;
@@ -67,7 +64,7 @@ public class DefaultDataCenter implements DataCenter {
         }
         author = new Author();
         book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());
-        author.setName("DAveHerring "+ i);
+        author.setName("DAveHerring " + i);
         book.setAuthor(author);
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
@@ -77,7 +74,6 @@ public class DefaultDataCenter implements DataCenter {
         author.setBooks(books);
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
-
       }
 
       realm.close();
@@ -104,7 +100,7 @@ public class DefaultDataCenter implements DataCenter {
 
   @Override public Observable<Book> remove(final Book book) {
 
-    Realm realm = Realm.getDefaultInstance();
+    final Realm realm = Realm.getDefaultInstance();
     return realm.where(Book.class)
         .equalTo("id", book.getId())
         .findFirstAsync()
@@ -124,7 +120,7 @@ public class DefaultDataCenter implements DataCenter {
   }
 
   @Override public Observable<List<Book>> getAllData() {
-    Realm realm = Realm.getDefaultInstance();
+    final Realm realm = Realm.getDefaultInstance();
     return realm.where(Book.class).findAllAsync()
         .asObservable()
         .filter(RealmResults::isLoaded)
@@ -134,8 +130,8 @@ public class DefaultDataCenter implements DataCenter {
   }
 
   @Override public Observable<Book> getBookById(int id) {
-    Realm realm = Realm.getDefaultInstance();
-    RealmObject realmObject = realm.where(Book.class).equalTo("id", id).findFirst();
+    final Realm realm = Realm.getDefaultInstance();
+    final RealmObject realmObject = realm.where(Book.class).equalTo("id", id).findFirst();
     if (realmObject != null) {
       return realmObject.asObservable()
           .map(realmObject1 -> (Book) realmObject1)
@@ -148,7 +144,7 @@ public class DefaultDataCenter implements DataCenter {
   }
 
   @Override public Observable<Book> update(final Book book) {
-    Realm realm = Realm.getDefaultInstance();
+    final Realm realm = Realm.getDefaultInstance();
     return realm.asObservable().first()
         .observeOn(AndroidSchedulers.mainThread())
         .map(bgRealm -> {
@@ -161,7 +157,7 @@ public class DefaultDataCenter implements DataCenter {
   }
 
   @Override public Observable<Book> checkOut(final Book book) {
-    Realm realm = Realm.getDefaultInstance();
+    final Realm realm = Realm.getDefaultInstance();
 
     return realm.asObservable()
         .first()
@@ -190,7 +186,7 @@ public class DefaultDataCenter implements DataCenter {
     Realm.getDefaultInstance().removeChangeListener(changeListener);
   }
 
-  private void logError(Throwable throwable) {
+  private void logError(final Throwable throwable) {
     Timber.d("##" + throwable.toString());
   }
 

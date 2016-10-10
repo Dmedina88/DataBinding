@@ -1,6 +1,5 @@
 package com.grayherring.databinding.activity.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,7 +29,7 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     binding.mainRv.setLayoutManager(new LinearLayoutManager(this));
     bookAdapter = new BookAdapter(vm);
@@ -53,17 +52,17 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
+  public boolean onCreateOptionsMenu(final Menu menu) {
     getMenuInflater().inflate(R.menu.main, menu);
     searchMenuItem = menu.findItem(R.id.search);
-    SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
     searchView.setOnQueryTextListener(this);
     return true;
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    final int id = item.getItemId();
     switch (id) {
       case R.id.action_add:
         startAddActivity();
@@ -79,23 +78,23 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
   }
 
   @Override public void startAddActivity() {
-  UploadActivity.start(this,-1);
+    UploadActivity.start(this, -1);
   }
 
-  @Override public void startDetailActivity(int id) {
-   DetailsActivity.start(this,id);
+  @Override public void startDetailActivity(final int id) {
+    DetailsActivity.start(this, id);
   }
 
-  @Override public boolean onQueryTextSubmit(String query) {
+  @Override public boolean onQueryTextSubmit(final String query) {
     return true;
   }
 
-  @Override public boolean onQueryTextChange(String newText) {
+  @Override public boolean onQueryTextChange(final String newText) {
     vm.search(newText);
     return false;
   }
 
-  @Override public void onChange(Realm element) {
+  @Override public void onChange(final Realm element) {
     vm.getAllData(null);
   }
 }

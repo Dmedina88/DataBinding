@@ -3,7 +3,7 @@ package com.grayherring.databinding.data;
 /**
  * Created by davidmedina on 4/22/16.
  */
-public class SwagDataCenter  {
+public class SwagDataCenter {
 
   private static DataCenter instance;
 
@@ -36,6 +36,4 @@ public class SwagDataCenter  {
     }
     return instance;
   }
-
-
 }

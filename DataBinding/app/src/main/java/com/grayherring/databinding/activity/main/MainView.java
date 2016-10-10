@@ -4,7 +4,7 @@ import com.grayherring.databinding.base.BaseView;
 
 public interface MainView extends BaseView {
 
-  public void startAddActivity();
+  void startAddActivity();
 
-  public void startDetailActivity(int position);
+  void startDetailActivity(int position);
 }

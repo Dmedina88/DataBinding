@@ -1,10 +1,8 @@
 package com.grayherring.databinding.model;
 
-import io.realm.BookRealmProxy;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
-import org.parceler.Parcel;
 
 /**
  * Created by David on 12/3/2015.
@@ -30,12 +28,12 @@ public class Book extends RealmObject {
     return author;
   }
 
-  public void setAuthor(String author) {
-    this.author.setName(author);
-  }
-
   public void setAuthor(Author author) {
     this.author = author;
+  }
+
+  public void setAuthor(String author) {
+    this.author.setName(author);
   }
 
   public String getCategories() {
