@@ -24,7 +24,8 @@ public class SwagApp extends Application {
   public void onCreate() {
     super.onCreate();
     Timber.plant(new Timber.DebugTree());
-    Realm.setDefaultConfiguration(new RealmConfiguration.Builder(getApplicationContext()).build());
+    Realm.init(getApplicationContext());
+    Realm.setDefaultConfiguration(new RealmConfiguration.Builder().build());
     component = initComponent();
     component.inject(this);
 
