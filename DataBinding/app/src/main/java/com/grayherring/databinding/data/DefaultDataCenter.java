@@ -46,6 +46,7 @@ public class DefaultDataCenter implements DataCenter {
 
   @Override public Observable<ArrayList<Book>> seed() {
     final Random random = new Random();
+
     final ArrayList<Book> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
 
