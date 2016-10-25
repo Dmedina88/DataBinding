@@ -2,7 +2,8 @@ package com.grayherring.databinding.data.provider;
 
 import android.support.annotation.NonNull;
 import com.grayherring.databinding.data.DataProvider;
-import com.grayherring.databinding.model.Book;
+import com.grayherring.databinding.model.RealmBook;
+import com.grayherring.databinding.model.BookInterface;
 import io.realm.Realm;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,22 +64,22 @@ public class ProviderDataCenter {
   //
   //  }public String getImage(){
 
-  public Observable<ArrayList<Book>> seed() {
+  public Observable<ArrayList<BookInterface>> seed() {
     Random random = new Random();
-    ArrayList<Book> books = new ArrayList<>();
+    ArrayList<BookInterface> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
-      Book book;
+      RealmBook book;
       Realm realm = Realm.getDefaultInstance();
       for (int i = 0; i < 3; i++) {
-        book = new Book();
+        book = new RealmBook();
         realm.beginTransaction();
         try {
-          book.setId(realm.where(Book.class).max("id").intValue() + 1);
+          book.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
           // no books yet
         } catch (NullPointerException e) {
           book.setId(0);
         }
-        book.setTitle("Flux Book V" + i);
+        book.setTitle("Flux RealmBook V" + i);
         book.getAuthor().setName("Grayherring BattleStar " + i);
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
@@ -88,22 +89,22 @@ public class ProviderDataCenter {
         books1.add(book);
       }
       realm.close();
-      Observable<ArrayList<Book>> booksObservable = Observable.just(books1);
+      Observable<ArrayList<BookInterface>> booksObservable = Observable.just(books1);
       return booksObservable;
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
   //// TODO: 5/20/16 i should really create an error action
-  public void add(final Book book) {
+  public void add(final RealmBook book) {
     provider(BookAddedDataProvider.class).subscribe(bookAddedDataProvider -> {
       bookAddedDataProvider.addBook(book);
     });
   }
 
-  public Observable<Book> remove(final Book book) {
+  public Observable<BookInterface> remove(final BookInterface book) {
     return Observable.just(book).doOnNext(book1 -> {
       Realm realm = Realm.getDefaultInstance();
-      realm.where(Book.class)
+      realm.where(RealmBook.class)
           .equalTo("id", book.getId())
           .findFirstAsync()
           .asObservable()
@@ -124,7 +125,7 @@ public class ProviderDataCenter {
   }
 
   public void update(final Integer position,
-      final Book book, final String source) {
+      final BookInterface book, final String source) {
     //
     //    Realm realm = Realm.getDefaultInstance();
     //    realm.asObservable()
@@ -145,7 +146,7 @@ public class ProviderDataCenter {
     //        }, realm::close);
   }
 /*
-  public void checkOut(final Integer position, final Book book, final String source) {
+  public void checkOut(final Integer position, final RealmBook book, final String source) {
     DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     Realm realm = Realm.getDefaultInstance();
     Date today = Calendar.getInstance().getTime();
@@ -182,7 +183,7 @@ public class ProviderDataCenter {
     dispatcher.sendAction(filterAction);
   }
 
-  public void selectBook(Book book, int index, String source) {
+  public void selectBook(RealmBook book, int index, String source) {
     SwagAction selectBook = new SwagAction(SELECT_BOOK);
     selectBook.source = source;
 
@@ -212,7 +213,7 @@ public class ProviderDataCenter {
     dispatcher.sendAction(failAction);
   }
 
-  private void success(List<Book> books) {
+  private void success(List<RealmBook> books) {
     SwagAction successAction = new SwagAction(DATA_CHANGE_NEW);
     successAction.payload.books.addAll(books);
     dispatcher.sendAction(successAction);

@@ -1,7 +1,10 @@
 package com.grayherring.databinding.data;
 
-import com.grayherring.databinding.model.Author;
 import com.grayherring.databinding.model.Book;
+import com.grayherring.databinding.model.RealmAuthor;
+import com.grayherring.databinding.model.RealmBook;
+import com.grayherring.databinding.model.AuthorInterface;
+import com.grayherring.databinding.model.BookInterface;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -44,35 +47,35 @@ public class DefaultDataCenter implements DataCenter {
     });
   }
 
-  @Override public Observable<ArrayList<Book>> seed() {
+  @Override public Observable<List<Book>> seed() {
     final Random random = new Random();
 
-    final ArrayList<Book> books = new ArrayList<>();
+    final ArrayList<BookInterface> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
 
-      Book book;
-      Author author;
+      RealmBook book;
+      AuthorInterface realmAuthor;
       Realm realm = Realm.getDefaultInstance();
 
       for (int i = 0; i < 7; i++) {
-        book = new Book();
+        book = new RealmBook();
         realm.beginTransaction();
         try {
-          book.setId(realm.where(Book.class).max("id").intValue() + 1);
+          book.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
           // no books yet
         } catch (NullPointerException e) {
           book.setId(0);
         }
-        author = new Author();
+        realmAuthor = new RealmAuthor();
         book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());
-        author.setName("DAveHerring " + i);
-        book.setAuthor(author);
+        realmAuthor.setName("DAveHerring " + i);
+        book.setAuthor(realmAuthor);
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
 
         books1.add(book);
-        author.setBooks(books);
+        realmAuthor.setBooks(books);
         realm.copyToRealmOrUpdate(book);
         realm.commitTransaction();
       }
@@ -82,12 +85,12 @@ public class DefaultDataCenter implements DataCenter {
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
-  @Override public Observable<Book> add(final Book book) {
+  @Override public Observable<R> add(final RealmBook book) {
     return Observable.just(book).map(book1 -> {
       Realm realm = Realm.getDefaultInstance();
       realm.beginTransaction();
       try {
-        book1.setId(realm.where(Book.class).max("id").intValue() + 1);
+        book1.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
         // no books yet
       } catch (NullPointerException e) {
         book1.setId(0);
@@ -99,14 +102,14 @@ public class DefaultDataCenter implements DataCenter {
     }).subscribeOn(rx.schedulers.Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
   }
 
-  @Override public Observable<Book> remove(final Book book) {
+  @Override public Observable<BookInterface> remove(final BookInterface book) {
 
     final Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class)
+    return realm.where(RealmBook.class)
         .equalTo("id", book.getId())
         .findFirstAsync()
         .asObservable()
-        .filter(Book::isLoaded)
+        .filter(RealmBook::isLoaded)
         .concatMap(realmObject -> {
           {
             if (realmObject.isLoaded() && realmObject.isValid()) {
@@ -120,9 +123,9 @@ public class DefaultDataCenter implements DataCenter {
         .doOnError(e -> Timber.e(e.toString()));
   }
 
-  @Override public Observable<List<Book>> getAllData() {
+  @Override public Observable<List<BookInterface>> getAllData() {
     final Realm realm = Realm.getDefaultInstance();
-    return realm.where(Book.class).findAllAsync()
+    return realm.where(RealmBook.class).findAllAsync()
         .asObservable()
         .filter(RealmResults::isLoaded)
         .observeOn(AndroidSchedulers.mainThread())
@@ -130,12 +133,12 @@ public class DefaultDataCenter implements DataCenter {
         .doOnCompleted(realm::close);
   }
 
-  @Override public Observable<Book> getBookById(int id) {
+  @Override public Observable<BookInterface> getBookById(int id) {
     final Realm realm = Realm.getDefaultInstance();
-    final RealmObject realmObject = realm.where(Book.class).equalTo("id", id).findFirst();
+    final RealmObject realmObject = realm.where(RealmBook.class).equalTo("id", id).findFirst();
     if (realmObject != null) {
       return realmObject.asObservable()
-          .map(realmObject1 -> (Book) realmObject1)
+          .map(realmObject1 -> (BookInterface) realmObject1)
           .map(realm::copyFromRealm)
           .observeOn(AndroidSchedulers.mainThread())
           .doOnCompleted(realm::close);
@@ -144,7 +147,7 @@ public class DefaultDataCenter implements DataCenter {
     }
   }
 
-  @Override public Observable<Book> update(final Book book) {
+  @Override public Observable<BookInterface> update(final RealmBook book) {
     final Realm realm = Realm.getDefaultInstance();
     return realm.asObservable().first()
         .observeOn(AndroidSchedulers.mainThread())
@@ -157,7 +160,7 @@ public class DefaultDataCenter implements DataCenter {
         }).doOnError(this::logError).doOnCompleted(realm::close);
   }
 
-  @Override public Observable<Book> checkOut(final Book book) {
+  @Override public Observable<BookInterface> checkOut(final RealmBook book) {
     final Realm realm = Realm.getDefaultInstance();
 
     return realm.asObservable()
@@ -191,10 +194,10 @@ public class DefaultDataCenter implements DataCenter {
     Timber.d("##" + throwable.toString());
   }
 
-  @Override public Observable<List<Book>> searchByTitle(String newText) {
+  @Override public Observable<List<BookInterface>> searchByTitle(String newText) {
     Realm realm = Realm.getDefaultInstance();
     return Realm.getDefaultInstance()
-        .where(Book.class)
+        .where(RealmBook.class)
         .beginsWith("title", newText, Case.INSENSITIVE)
         .findAllAsync()
         .asObservable().observeOn(AndroidSchedulers.mainThread())

@@ -1,51 +1,40 @@
 package com.grayherring.databinding.model;
 
-import io.realm.RealmList;
-import io.realm.RealmModel;
-import io.realm.annotations.RealmClass;
 import java.util.List;
 
 /**
- * Created by davidmedina on 8/27/16.
+ * Created by davidmedina on 10/25/16 =).
  */
-//@Parcel(implementations = { AuthorRealmProxy.class },
-//        value = Parcel.Serialization.BEAN,
-//        analyze = { Author.class })
-@RealmClass
-public class Author implements RealmModel {
 
-  private String Name;
-  private String Birthday;
+public class Author implements AuthorInterface {
 
-  private RealmList<Book> books;
+  private RealmAuthor realmAuthor;
 
-  public String getName() {
-    return Name;
+  @Override public String getName() {
+    return null;
   }
 
-  public void setName(String name) {
-    Name = name;
+  @Override public void setName(final String name) {
+
   }
 
-  public String getBirthday() {
-    return Birthday;
+  @Override public String getBirthday() {
+    return null;
   }
 
-  public void setBirthday(String birthday) {
-    Birthday = birthday;
+  @Override public void setBirthday(final String birthday) {
+
   }
 
-  public List<Book> getBooks() {
-    return books;
+  @Override public List<BookInterface> getBooks() {
+    return null;
   }
 
-  public void setBooks(RealmList<Book> books) {
-    this.books = books;
+  @Override public void setBooks(final List<BookInterface> books) {
+
   }
 
-  public void setBooks(List<Book> books) {
-    RealmList<Book> realmList = new RealmList<>();
-    realmList.addAll(books);
-    this.books = realmList;
+  public void setRealmAuthor(final RealmAuthor realmAuthor) {
+    this.realmAuthor = realmAuthor;
   }
 }

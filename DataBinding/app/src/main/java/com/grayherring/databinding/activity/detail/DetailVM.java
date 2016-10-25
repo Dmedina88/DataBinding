@@ -3,7 +3,8 @@ package com.grayherring.databinding.activity.detail;
 import android.view.View;
 import com.grayherring.databinding.base.BaseViewModel;
 import com.grayherring.databinding.data.SwagDataCenter;
-import com.grayherring.databinding.model.Book;
+import com.grayherring.databinding.model.RealmBook;
+import com.grayherring.databinding.model.BookInterface;
 import com.grayherring.databinding.util.RxUtil;
 import rx.Subscription;
 import timber.log.Timber;
@@ -11,9 +12,9 @@ import timber.log.Timber;
 public class DetailVM extends BaseViewModel<DetailView> {
 
   private Subscription subscription;
-  private Book book;
+  private RealmBook book;
 
-  public DetailVM(final int id, final Book book) {
+  public DetailVM(final int id, final RealmBook book) {
     if (book != null) {
       Timber.d(book.toString());
       setBook(book);
@@ -28,7 +29,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
     super.detach();
   }
 
-  public void setBook(final Book book) {
+  public void setBook(final RealmBook book) {
     this.book = book;
   }
 
@@ -40,7 +41,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
 
     String string = "";
     Timber.d("##" + book.getAuthor().getBooks().size());
-    for (final Book book1 : book.getAuthor().getBooks()) {
+    for (final BookInterface book1 : book.getAuthor().getBooks()) {
       string = string.concat(", " + book1.getTitle());
     }
     view.listOtherBooks(string);
@@ -58,7 +59,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
     };
   }
 
-  public Book getBook() {
+  public BookInterface getBook() {
     return book;
   }
 

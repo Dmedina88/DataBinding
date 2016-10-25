@@ -1,6 +1,9 @@
 package com.grayherring.databinding.util;
 
+import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public final class RxUtil {
 
@@ -28,4 +31,10 @@ public final class RxUtil {
       unSubscribeIfNeeded(subscription);
     }
   }
+
+  public static <T> Observable.Transformer<T, T> applySchedulers() {
+    return observable -> observable.subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread());
+  }
+
 }

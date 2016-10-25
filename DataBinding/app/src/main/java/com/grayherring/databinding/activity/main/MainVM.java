@@ -4,7 +4,7 @@ import android.databinding.ObservableArrayList;
 import android.view.View;
 import com.grayherring.databinding.base.BaseViewModel;
 import com.grayherring.databinding.data.SwagDataCenter;
-import com.grayherring.databinding.model.Book;
+import com.grayherring.databinding.model.BookInterface;
 import com.grayherring.databinding.util.RxUtil;
 import java.util.List;
 import rx.Subscription;
@@ -15,14 +15,14 @@ import rx.Subscription;
 
 public class MainVM extends BaseViewModel<MainView> {
 
-  ObservableArrayList<Book> books = new ObservableArrayList<>();
+  ObservableArrayList<BookInterface> books = new ObservableArrayList<>();
   private Subscription dataSubscription;
 
   public MainVM() {
     super();
   }
 
-  public List<Book> getBooks() {
+  public List<BookInterface> getBooks() {
     return books;
   }
 

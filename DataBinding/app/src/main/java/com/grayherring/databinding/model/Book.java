@@ -1,107 +1,119 @@
 package com.grayherring.databinding.model;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.RealmClass;
+import io.realm.Realm;
 
 /**
- * Created by David on 12/3/2015.
+ * Created by davidmedina on 10/25/16 =).
  */
-//@Parcel(implementations = { BookRealmProxy.class },
-//        value = Parcel.Serialization.BEAN,
-//        analyze = { Book.class })
-@RealmClass
-public class Book extends RealmObject {
 
-  private Author author;
-  private String categories;
-  private String lastCheckedOut;
-  private String lastCheckedOutBy;
-  private String publisher;
-  private String title;
+public class Book implements  BookInterface{
 
-  private String image;
-  @PrimaryKey
-  private Integer id;
+  private RealmBook realmBook;
 
-  public Author getAuthor() {
-    return author;
+  public Book(final RealmBook realmBook) {
+    this.realmBook = realmBook;
   }
 
-  public void setAuthor(Author author) {
-    this.author = author;
+  @Override public AuthorInterface getAuthor() {
+    return realmBook.getAuthor();
   }
 
-  public void setAuthor(String author) {
-    this.author.setName(author);
+  @Override public void setAuthor(final RealmAuthor realmAuthor) {
+   Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setAuthor(realmAuthor);
+          realm1.close();
+    });
+
   }
 
-  public String getCategories() {
-    return categories;
+  @Override public void setAuthor(final String author) {
+    realmBook.setAuthor(author);
   }
 
-  public void setCategories(String categories) {
-    this.categories = categories;
+  @Override public String getCategories() {
+    return realmBook.getCategories();
   }
 
-  public String getLastCheckedOut() {
-    return lastCheckedOut;
+  @Override public void setCategories(final String categories) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setCategories(categories);
+      realm1.close();
+    });
   }
 
-  public void setLastCheckedOut(String lastCheckedOut) {
-    this.lastCheckedOut = lastCheckedOut;
+
+  @Override public String getLastCheckedOut() {
+    return realmBook.getLastCheckedOut();
   }
 
-  public String getLastCheckedOutBy() {
-    return lastCheckedOutBy;
+  @Override public void setLastCheckedOut(final String lastCheckedOut) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setLastCheckedOut(lastCheckedOut);
+      realm1.close();
+    });
   }
 
-  public void setLastCheckedOutBy(String lastCheckedOutBy) {
-    this.lastCheckedOutBy = lastCheckedOutBy;
+  @Override public String getLastCheckedOutBy() {
+    return null;
   }
 
-  public String getPublisher() {
-    return publisher;
+  @Override public void setLastCheckedOutBy(final String lastCheckedOutBy) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setLastCheckedOutBy(lastCheckedOutBy);
+      realm1.close();
+    });
   }
 
-  public void setPublisher(String publisher) {
-    this.publisher = publisher;
+  @Override public String getPublisher() {
+    return null;
   }
 
-  public String getTitle() {
-    return title;
+  @Override public void setPublisher(final String publisher) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setPublisher(publisher);
+      realm1.close();
+    });
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  @Override public String getTitle() {
+    return null;
   }
 
-  public Integer getId() {
-    return id;
+  @Override public void setTitle(final String title) {
+
   }
 
-  public void setId(Integer id) {
-    this.id = id;
+  @Override public Integer getId() {
+    return null;
   }
 
-  public String getImage() {
-    return image;
+  @Override public void setId(final Integer id) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setId(id);
+      realm1.close();
+    });
   }
 
-  public void setImage(String image) {
-    this.image = image;
+  @Override public String getImage() {
+    return null;
   }
 
-  @Override public String toString() {
-    return "Book{" +
-        "author='" + author + '\'' +
-        ", categories='" + categories + '\'' +
-        ", lastCheckedOut='" + lastCheckedOut + '\'' +
-        ", lastCheckedOutBy='" + lastCheckedOutBy + '\'' +
-        ", publisher='" + publisher + '\'' +
-        ", title='" + title + '\'' +
-        ", image='" + image + '\'' +
-        ", id=" + id +
-        '}';
+  @Override public void setImage(final String image) {
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setImage(image);
+      realm1.close();
+    });
+
+  }
+
+  public void setRealmBook(final RealmBook realmBook) {
+    this.realmBook = realmBook;
   }
 }

@@ -11,7 +11,7 @@ import com.grayherring.databinding.activity.addupdate.UploadActivity;
 import com.grayherring.databinding.base.BaseBindingActivity;
 import com.grayherring.databinding.data.SwagDataCenter;
 import com.grayherring.databinding.databinding.ActivityDetailsBinding;
-import com.grayherring.databinding.model.Book;
+import com.grayherring.databinding.model.BookInterface;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import org.parceler.Parcels;
@@ -29,7 +29,7 @@ public class DetailsActivity
     context.startActivity(i);
   }
 
-  public static void start(final Context context, final Book book) {
+  public static void start(final Context context, final BookInterface book) {
     final Intent i = new Intent(context, DetailsActivity.class);
     i.putExtra(SELECTED_ITEM, Parcels.wrap(book));
     context.startActivity(i);
