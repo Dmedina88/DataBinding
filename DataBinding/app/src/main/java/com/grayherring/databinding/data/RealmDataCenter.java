@@ -2,7 +2,6 @@ package com.grayherring.databinding.data;
 
 import com.grayherring.databinding.model.Book;
 import com.grayherring.databinding.model.BookInterface;
-import com.grayherring.databinding.model.RealmAuthor;
 import com.grayherring.databinding.model.RealmBook;
 import io.realm.Case;
 import io.realm.Realm;
@@ -48,7 +47,6 @@ public class RealmDataCenter implements DataCenter {
     return Observable.just(books).concatMap(books1 -> {
       BookInterface book;
       Realm realm = Realm.getDefaultInstance();
-      RealmAuthor realmAuthor;
       for (int i = 0; i < 200; i++) {
         book = new RealmBook();
         realm.beginTransaction();
@@ -58,16 +56,12 @@ public class RealmDataCenter implements DataCenter {
         } catch (NullPointerException e) {
           book.setId(0);
         }
-        realmAuthor = new RealmAuthor();
-        book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());
-        realmAuthor.setName("DAveHerring " + i);
-        book.setAuthor(realmAuthor);
+        book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());;
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
 
         books1.add(book);
-        realmAuthor.setBooks(books);
         realm.commitTransaction();
       }
 
@@ -77,8 +71,8 @@ public class RealmDataCenter implements DataCenter {
   }
 
   //// TODO: 5/20/16 i should really create an error action
-  @Override public Observable<BookInterface> add(final RealmBook realmBook) {
-    return Observable.just(realmBook).map(
+  @Override public Observable<BookInterface> add(final BookInterface realmBook) {
+    return Observable.just(realmBook).cast(RealmBook.class).map(
         book -> {
           Realm realm = Realm.getDefaultInstance();
           realm.beginTransaction();
@@ -141,8 +135,8 @@ public class RealmDataCenter implements DataCenter {
     }
   }
 
-  @Override public Observable<BookInterface> update(final RealmBook book) {
-   // Realm realm = Realm.getDefaultInstance();
+  @Override public Observable<BookInterface> update(final BookInterface book) {
+    // Realm realm = Realm.getDefaultInstance();
     //return realm.asObservable().first()
     //    .compose(applySchedulers())
     //    .map(bgRealm -> {
@@ -152,9 +146,10 @@ public class RealmDataCenter implements DataCenter {
     //      //bgRealm.close();
     //      return book;
     //    }).doOnError(this::logError).doOnCompleted(realm::close);
+    return Observable.just(book);
   }
 
-  @Override public Observable<BookInterface> checkOut(final RealmBook book) {
+  @Override public Observable<BookInterface> checkOut(final BookInterface book) {
     //Realm realm = Realm.getDefaultInstance();
     //return realm.asObservable()
     //    .first()
@@ -174,7 +169,6 @@ public class RealmDataCenter implements DataCenter {
     //      Timber.e("checkOut" + throwable.getLocalizedMessage());
     //    });
     return Observable.just(book);
-
   }
 
   @Override public void addRealmChangeListener(RealmChangeListener<Realm> changeListener) {

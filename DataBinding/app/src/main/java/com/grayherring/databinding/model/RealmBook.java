@@ -13,7 +13,7 @@ import io.realm.annotations.RealmClass;
 @RealmClass
 public class RealmBook extends RealmObject implements BookInterface {
 
-  private RealmAuthor realmAuthor;
+  private String author;
   private String categories;
   private String lastCheckedOut;
   private String lastCheckedOutBy;
@@ -24,16 +24,12 @@ public class RealmBook extends RealmObject implements BookInterface {
   @PrimaryKey
   private Integer id;
 
-  @Override public AuthorInterface getAuthor() {
-    return realmAuthor;
+  @Override public String getAuthor() {
+    return author;
   }
 
-  @Override public void setAuthor(RealmAuthor realmAuthor) {
-    this.realmAuthor = realmAuthor;
-  }
-
-  @Override public void setAuthor(String author) {
-    this.realmAuthor.setName(author);
+  @Override public void setAuthor(final String author) {
+  this.author = author;
   }
 
   @Override public String getCategories() {
@@ -94,7 +90,6 @@ public class RealmBook extends RealmObject implements BookInterface {
 
   @Override public String toString() {
     return "RealmBook{" +
-        "author='" + realmAuthor + '\'' +
         ", categories='" + categories + '\'' +
         ", lastCheckedOut='" + lastCheckedOut + '\'' +
         ", lastCheckedOutBy='" + lastCheckedOutBy + '\'' +

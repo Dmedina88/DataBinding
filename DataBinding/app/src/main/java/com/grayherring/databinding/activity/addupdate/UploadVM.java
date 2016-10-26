@@ -4,7 +4,6 @@ import android.view.View;
 import com.grayherring.databinding.base.BaseViewModel;
 import com.grayherring.databinding.data.DataCenter;
 import com.grayherring.databinding.data.SwagDataCenter;
-import com.grayherring.databinding.model.RealmAuthor;
 import com.grayherring.databinding.model.RealmBook;
 import com.grayherring.databinding.model.BookInterface;
 import timber.log.Timber;
@@ -16,11 +15,10 @@ import timber.log.Timber;
 public class UploadVM extends BaseViewModel<AddUpdateView> {
 
   private final DataCenter dataCenter = SwagDataCenter.getInstance();
-  private RealmBook book;
+  private BookInterface book;
 
   public UploadVM() {
     book = new RealmBook();
-    book.setAuthor(new RealmAuthor());
     this.notifyChange();
   }
 

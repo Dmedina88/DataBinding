@@ -4,9 +4,8 @@ package com.grayherring.databinding.model;
  * Created by davidmedina on 10/25/16 =).
  */
 public interface BookInterface {
-  AuthorInterface getAuthor();
 
-  void setAuthor(RealmAuthor realmAuthor);
+  String getAuthor();
 
   void setAuthor(String author);
 

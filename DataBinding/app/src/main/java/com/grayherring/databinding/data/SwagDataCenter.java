@@ -22,7 +22,7 @@ public class SwagDataCenter {
     if (instance == null) {
       synchronized (SwagDataCenter.class) {
         if (instance == null) {
-          instance = new DefaultDataCenter();
+          instance = new RealmDataCenter();
         }
       }
     }

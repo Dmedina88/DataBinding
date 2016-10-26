@@ -7,7 +7,7 @@
   <data>
     <variable
         name="book"
-        type="com.grayherring.databinding.model.RealmBook"
+        type="com.grayherring.databinding.model.BookInterface"
         />
   </data>
   <android.support.v7.widget.CardView
@@ -45,7 +45,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_margin="6dp"
-          android:text="@{book.author.name}"
+          android:text="@{book.author}"
           tools:text="author"
           />
 

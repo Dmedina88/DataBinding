@@ -14,21 +14,16 @@ public class Book implements  BookInterface{
     this.realmBook = realmBook;
   }
 
-  @Override public AuthorInterface getAuthor() {
-    return realmBook.getAuthor();
-  }
-
-  @Override public void setAuthor(final RealmAuthor realmAuthor) {
-   Realm realm = Realm.getDefaultInstance();
-    realm.executeTransactionAsync(realm1 -> {
-      realmBook.setAuthor(realmAuthor);
-          realm1.close();
-    });
-
+  @Override public String getAuthor() {
+    return null;
   }
 
   @Override public void setAuthor(final String author) {
-    realmBook.setAuthor(author);
+    Realm realm = Realm.getDefaultInstance();
+    realm.executeTransactionAsync(realm1 -> {
+      realmBook.setAuthor(author);
+      realm1.close();
+    });
   }
 
   @Override public String getCategories() {

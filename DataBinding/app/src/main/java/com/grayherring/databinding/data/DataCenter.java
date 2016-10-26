@@ -18,7 +18,7 @@ public interface DataCenter {
   Observable<List<Book>> seed();
 
   //// TODO: 5/20/16 i should really create an error action
-  Observable<BookInterface> add(RealmBook book);
+  Observable<BookInterface> add(BookInterface book);
 
   Observable<BookInterface> remove(BookInterface book);
 
@@ -26,9 +26,9 @@ public interface DataCenter {
 
   Observable<BookInterface> getBookById(int id);
 
-  Observable<BookInterface> update(RealmBook book);
+  Observable<BookInterface> update(BookInterface book);
 
-  Observable<BookInterface> checkOut(RealmBook book);
+  Observable<BookInterface> checkOut(BookInterface book);
 
   void addRealmChangeListener(RealmChangeListener<Realm> changeListener);
 

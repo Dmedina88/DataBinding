@@ -12,7 +12,7 @@ import timber.log.Timber;
 public class DetailVM extends BaseViewModel<DetailView> {
 
   private Subscription subscription;
-  private RealmBook book;
+  private BookInterface book;
 
   public DetailVM(final int id, final RealmBook book) {
     if (book != null) {
@@ -38,13 +38,7 @@ public class DetailVM extends BaseViewModel<DetailView> {
   }
 
   public void showOtherBooks(final View v) {
-
-    String string = "";
-    Timber.d("##" + book.getAuthor().getBooks().size());
-    for (final BookInterface book1 : book.getAuthor().getBooks()) {
-      string = string.concat(", " + book1.getTitle());
-    }
-    view.listOtherBooks(string);
+    view.listOtherBooks("i am lazy");
   }
 
   @Override protected DetailView getEmptyView() {
