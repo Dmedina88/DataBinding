@@ -6,14 +6,16 @@ import com.grayherring.databinding.model.RealmBook;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
 import timber.log.Timber;
 
 import static com.grayherring.databinding.util.RxUtil.applySchedulers;
@@ -51,14 +53,15 @@ public class RealmDataCenter implements DataCenter {
       Realm realm = Realm.getDefaultInstance();
       for (int i = 0; i < 200; i++) {
         realm.beginTransaction();
-        book = realm.createObject(RealmBook.class,(int) (System.currentTimeMillis()));
+        book = realm.createObject(RealmBook.class, (int) (System.currentTimeMillis()));
         //try {
         //  book.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
         //  // no books yet
         //} catch (NullPointerException e) {
         //  book.setId(0);
         //}
-        book.setTitle(new BigInteger(34, random).toString(3) + " index " + i + "id" + book.getId());;
+        book.setTitle(new BigInteger(34, random).toString(3) + " index " + i + "id" + book.getId());
+        ;
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
@@ -67,7 +70,12 @@ public class RealmDataCenter implements DataCenter {
         realm.commitTransaction();
       }
 
-      return Observable.from(books1).cast(RealmBook.class).map(Book::new).doOnNext(book1 -> Timber.d(book1.toString())).toList().doOnCompleted(() -> realm.close());
+      return Observable
+          .from(books1)
+          .cast(RealmBook.class)
+          .map(Book::new)
+          .doOnNext(book1 -> Timber.d(book1.toString()))
+          .toList();
     }).compose(applySchedulers());
   }
 
@@ -125,9 +133,11 @@ public class RealmDataCenter implements DataCenter {
 
   @Override public Observable<BookInterface> getBookById(int id) {
     Realm realm = Realm.getDefaultInstance();
-    RealmObject realmObject = realm.where(RealmBook.class).equalTo("id", id).findFirst();
+    RealmBook realmObject = realm.where(RealmBook.class).equalTo("id", id).findFirst();
     if (realmObject != null) {
       return realmObject.asObservable()
+          .observeOn(AndroidSchedulers.mainThread())
+          .subscribeOn(AndroidSchedulers.mainThread())
           .cast(RealmBook.class)
           .map(Book::new)
           .cast(BookInterface.class)
@@ -138,39 +148,19 @@ public class RealmDataCenter implements DataCenter {
   }
 
   @Override public Observable<BookInterface> update(final BookInterface book) {
-    // Realm realm = Realm.getDefaultInstance();
-    //return realm.asObservable().first()
-    //    .compose(applySchedulers())
-    //    .map(bgRealm -> {
-    //      //bgRealm.beginTransaction();
-    //      //bgRealm.copyToRealmOrUpdate(book);
-    //      //bgRealm.commitTransaction();
-    //      //bgRealm.close();
-    //      return book;
-    //    }).doOnError(this::logError).doOnCompleted(realm::close);
     return Observable.just(book);
   }
 
   @Override public Observable<BookInterface> checkOut(final BookInterface book) {
-    //Realm realm = Realm.getDefaultInstance();
-    //return realm.asObservable()
-    //    .first()
-    //    .observeOn(AndroidSchedulers.mainThread())
-    //    .map(bgRealm -> {
-    //      // bgRealm.beginTransaction();
-    //      DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    //      Date today = Calendar.getInstance().getTime();
-    //      String date = df.format(today);
-    //      book.setLastCheckedOutBy("soy souse");
-    //      book.setLastCheckedOut(date);
-    //      //bgRealm.copyToRealmOrUpdate(book);
-    //      //bgRealm.commitTransaction();
-    //      //bgRealm.close();
-    //      return new Book(book);
-    //    }).doOnCompleted(realm::close).doOnError(throwable -> {
-    //      Timber.e("checkOut" + throwable.getLocalizedMessage());
-    //    });
-    return Observable.just(book);
+    return getBookById(book.getId())
+        .flatMap(bookInterface -> {
+      DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+      Date today = Calendar.getInstance().getTime();
+      String date = df.format(today);
+      bookInterface.setLastCheckedOutBy("soy souse");
+      bookInterface.setLastCheckedOut(date);
+      return Observable.just(bookInterface);
+    });
   }
 
   @Override public void addRealmChangeListener(RealmChangeListener<Realm> changeListener) {

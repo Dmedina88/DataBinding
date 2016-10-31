@@ -69,7 +69,6 @@ public class RealmBook extends RealmObject implements BookInterface {
   }
 
   @Override public void setTitle(String title) {
-
     this.title = title;
   }
 

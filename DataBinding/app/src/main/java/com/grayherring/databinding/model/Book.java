@@ -57,7 +57,7 @@ public class Book implements  BookInterface{
 
   @Override public void setLastCheckedOutBy(final String lastCheckedOutBy) {
     Realm realm = Realm.getDefaultInstance();
-    realm.executeTransactionAsync(realm1 -> {
+    realm.executeTransaction(realm1 -> {
       realmBook.setLastCheckedOutBy(lastCheckedOutBy);
       realm1.close();
     });

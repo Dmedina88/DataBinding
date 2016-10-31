@@ -66,7 +66,6 @@ public class DetailVM extends BaseViewModel<DetailView> {
 
   private void checkout() {
     subscription = SwagDataCenter.getInstance().checkOut(book).subscribe(book1 -> {
-      this.book = book1;
       this.notifyChange();
     });
   }
