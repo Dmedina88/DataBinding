@@ -52,7 +52,7 @@ public class Book implements  BookInterface{
   }
 
   @Override public String getLastCheckedOutBy() {
-    return null;
+    return realmBook.getLastCheckedOutBy();
   }
 
   @Override public void setLastCheckedOutBy(final String lastCheckedOutBy) {
@@ -64,7 +64,7 @@ public class Book implements  BookInterface{
   }
 
   @Override public String getPublisher() {
-    return null;
+    return realmBook.getPublisher();
   }
 
   @Override public void setPublisher(final String publisher) {
@@ -76,7 +76,7 @@ public class Book implements  BookInterface{
   }
 
   @Override public String getTitle() {
-    return null;
+    return realmBook.getTitle();
   }
 
   @Override public void setTitle(final String title) {
@@ -84,7 +84,7 @@ public class Book implements  BookInterface{
   }
 
   @Override public Integer getId() {
-    return null;
+    return realmBook.getId();
   }
 
   @Override public void setId(final Integer id) {
@@ -96,7 +96,7 @@ public class Book implements  BookInterface{
   }
 
   @Override public String getImage() {
-    return null;
+    return realmBook.getImage();
   }
 
   @Override public void setImage(final String image) {
@@ -110,5 +110,9 @@ public class Book implements  BookInterface{
 
   public void setRealmBook(final RealmBook realmBook) {
     this.realmBook = realmBook;
+  }
+
+  @Override public String toString() {
+    return realmBook.toString();
   }
 }

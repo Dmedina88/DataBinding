@@ -93,8 +93,8 @@ public class MainActivity extends BaseBindingActivity<ActivityMainBinding, MainV
     vm.search(newText);
     return false;
   }
-
+//todo show...
   @Override public void onChange(final Realm element) {
-    vm.getAllData(null);
+    vm.notifyChange();
   }
 }

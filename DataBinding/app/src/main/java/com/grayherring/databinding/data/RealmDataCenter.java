@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import timber.log.Timber;
 
 import static com.grayherring.databinding.util.RxUtil.applySchedulers;
@@ -42,31 +43,31 @@ public class RealmDataCenter implements DataCenter {
   }
 
   @Override public Observable<List<Book>> seed() {
+    Timber.d("##Seeding");
     Random random = new Random();
     ArrayList<BookInterface> books = new ArrayList<>();
     return Observable.just(books).concatMap(books1 -> {
       BookInterface book;
       Realm realm = Realm.getDefaultInstance();
       for (int i = 0; i < 200; i++) {
-        book = new RealmBook();
         realm.beginTransaction();
-        try {
-          book.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
-          // no books yet
-        } catch (NullPointerException e) {
-          book.setId(0);
-        }
-        book.setTitle(new BigInteger(34, random).toString(6) + " index " + i + "id" + book.getId());;
+        book = realm.createObject(RealmBook.class,(int) (System.currentTimeMillis()));
+        //try {
+        //  book.setId(realm.where(RealmBook.class).max("id").intValue() + 1);
+        //  // no books yet
+        //} catch (NullPointerException e) {
+        //  book.setId(0);
+        //}
+        book.setTitle(new BigInteger(34, random).toString(3) + " index " + i + "id" + book.getId());;
         book.setPublisher("Grayherring inc");
         book.setCategories("fire");
         book.setImage("https://unsplash.it/600/600?image=" + random.nextInt(1000));
-
         books1.add(book);
+        Timber.d(book.toString());
         realm.commitTransaction();
       }
 
-      realm.close();
-      return Observable.from(books1).cast(RealmBook.class).map(Book::new).toList();
+      return Observable.from(books1).cast(RealmBook.class).map(Book::new).doOnNext(book1 -> Timber.d(book1.toString())).toList().doOnCompleted(() -> realm.close());
     }).compose(applySchedulers());
   }
 
@@ -127,8 +128,9 @@ public class RealmDataCenter implements DataCenter {
     RealmObject realmObject = realm.where(RealmBook.class).equalTo("id", id).findFirst();
     if (realmObject != null) {
       return realmObject.asObservable()
-          .map(realmObject1 -> (BookInterface) realmObject1)
-          .observeOn(AndroidSchedulers.mainThread())
+          .cast(RealmBook.class)
+          .map(Book::new)
+          .cast(BookInterface.class)
           .doOnCompleted(realm::close);
     } else {
       return Observable.empty();
